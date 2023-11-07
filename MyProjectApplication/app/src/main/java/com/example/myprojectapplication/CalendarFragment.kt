@@ -29,7 +29,7 @@ class CalendarFragment : Fragment() {
         // 얻어온 calendar의 선택된 날짜에 따라 해당 연 월 일을 출력함.
         // 어플 실행 시 날짜를 클릭하지 않으면 오늘 날짜가 뜨지 않는 문제로 추가적인 코드가 필요함
         binding?.calendar?.setOnDateChangeListener { _, yyyy, mm, dd ->
-                // to_do list와 연계를 위해, 선택된 날짜를 변수에 저장하여 활용함
+            // to_do list와 연계를 위해, 선택된 날짜를 변수에 저장하여 활용함
             val selectedYear: Int = yyyy
             val selectedMonth: Int = mm + 1
             val selectedDay: Int = dd
@@ -58,6 +58,11 @@ class CalendarFragment : Fragment() {
         //유저 ID로 이동
         binding?.btnUserId?.setOnClickListener {
             findNavController().navigate(R.id.action_calenderFragment_to_userFragment)
+        }
+
+        //timer 이동 by 김상일
+        binding?.btnTimer?.setOnClickListener {
+            findNavController().navigate(R.id.action_calenderFragment_to_timerFragment)
         }
     }
 }

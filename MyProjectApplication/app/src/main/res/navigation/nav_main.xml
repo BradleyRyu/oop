@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_calenderFragment_to_todoFragment"
             app:destination="@id/todoFragment" />
+        <action
+            android:id="@+id/action_calenderFragment_to_timerFragment"
+            app:destination="@id/timerFragment" />
     </fragment>
     <fragment
         android:id="@+id/todoFragment"
@@ -51,5 +54,14 @@
         <action
             android:id="@+id/action_addToListFragment_to_todoFragment"
             app:destination="@id/todoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/timerFragment"
+        android:name="com.example.pomodoro.TimerFragment"
+        android:label="fragment_timer"
+        tools:layout="@layout/fragment_timer" >
+        <action
+            android:id="@+id/action_timerFragment_to_calenderFragment"
+            app:destination="@id/calenderFragment" />
     </fragment>
 </navigation>
