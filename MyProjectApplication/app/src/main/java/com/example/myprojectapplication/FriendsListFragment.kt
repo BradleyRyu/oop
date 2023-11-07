@@ -36,6 +36,16 @@ class FriendsListFragment : Fragment() {
             findNavController().navigate(R.id.action_friendsListFragment_to_calenderFragment)
         }
 
+        binding?.btnTodo?.setOnClickListener {
+            findNavController().navigate(R.id.action_friendsListFragment_to_todoFragment)
+        }
+
+        binding?.btnSetting?.setOnClickListener {
+            findNavController().navigate(R.id.action_friendsListFragment_to_setUserFragment2)
+        }
+
+
+
     }
 
 }
