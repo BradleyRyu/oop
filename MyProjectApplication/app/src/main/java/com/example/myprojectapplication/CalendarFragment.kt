@@ -60,7 +60,7 @@ class CalendarFragment : Fragment() {
             findNavController().navigate(R.id.action_calenderFragment_to_userFragment)
         }
 
-        //timer 이동 by 김상일
+        //timer로 이동 by 김상일
         binding?.btnTimer?.setOnClickListener {
             findNavController().navigate(R.id.action_calenderFragment_to_timerFragment)
         }
