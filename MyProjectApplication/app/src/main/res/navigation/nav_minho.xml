@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_minho"
+    app:startDestination="@id/calenderFragment">
+    <fragment
+        android:id="@+id/calenderFragment"
+        android:name="com.example.myprojectapplication.CalendarFragment"
+        android:label="fragment_calender"
+        tools:layout="@layout/fragment_calendar" >
+        <action
+            android:id="@+id/action_calenderFragment_to_userFragment"
+            app:destination="@id/userFragment" />
+        <action
+            android:id="@+id/action_calenderFragment_to_todoFragment"
+            app:destination="@id/todoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/todoFragment"
+        android:name="com.example.myprojectapplication.TodoFragment"
+        android:label="fragment_todo"
+        tools:layout="@layout/fragment_todo" >
+        <action
+            android:id="@+id/action_todoFragment_to_calenderFragment"
+            app:destination="@id/calenderFragment" />
+        <action
+            android:id="@+id/action_todoFragment_to_userFragment"
+            app:destination="@id/userFragment" />
+        <action
+            android:id="@+id/action_todoFragment_to_addToListFragment"
+            app:destination="@id/addToListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.example.myprojectapplication.UserFragment"
+        android:label="fragment_user"
+        tools:layout="@layout/fragment_user" >
+        <action
+            android:id="@+id/action_userFragment_to_calenderFragment"
+            app:destination="@id/calenderFragment" />
+        <action
+            android:id="@+id/action_userFragment_to_todoFragment"
+            app:destination="@id/todoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addToListFragment"
+        android:name="com.example.myprojectapplication.AddToListFragment"
+        android:label="fragment_add_to_list"
+        tools:layout="@layout/fragment_add_to_list" >
+        <action
+            android:id="@+id/action_addToListFragment_to_todoFragment"
+            app:destination="@id/todoFragment" />
+    </fragment>
+</navigation>
