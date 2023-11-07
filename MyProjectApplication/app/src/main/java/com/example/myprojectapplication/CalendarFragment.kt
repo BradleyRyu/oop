@@ -59,5 +59,9 @@ class CalendarFragment : Fragment() {
         binding?.btnUserId?.setOnClickListener {
             findNavController().navigate(R.id.action_calenderFragment_to_userFragment)
         }
+
+        binding?.btnFriendslist?.setOnClickListener {
+            findNavController().navigate(R.id.action_calenderFragment_to_friendsListFragment)
+        }
     }
 }
