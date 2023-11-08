@@ -32,8 +32,13 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rec_ShowToDo"
             android:layout_width="match_parent"
-            android:layout_height="449dp"
+            android:layout_height="249dp"
             android:layout_marginBottom="50dp" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart_week"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
 
         <Button
             android:id="@+id/btn_MoveTimer"
@@ -68,6 +73,7 @@
                 android:text="Friends" />
 
         </LinearLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
