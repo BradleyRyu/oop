@@ -134,7 +134,7 @@
                 android:layout_height="60dp" />
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/user_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:src="@tools:sample/avatars" />
