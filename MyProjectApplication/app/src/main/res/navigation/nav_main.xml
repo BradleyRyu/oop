@@ -102,5 +102,11 @@
         <action
             android:id="@+id/action_timerEntryFragment_to_calenderFragment"
             app:destination="@id/calenderFragment" />
+        <action
+            android:id="@+id/action_timerEntryFragment_to_addToListFragment"
+            app:destination="@id/addToListFragment" />
+        <action
+            android:id="@+id/action_timerEntryFragment_to_friendsListFragment"
+            app:destination="@id/friendsListFragment" />
     </fragment>
 </navigation>

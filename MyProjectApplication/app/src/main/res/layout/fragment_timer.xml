@@ -3,99 +3,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+
+    android:background="#FFCDC0">
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="-16dp"
+        tools:layout_editor_absoluteY="-41dp">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="324dp"
+            app:srcCompat="@drawable/tomato" />
+
+        <TextView
+            android:id="@+id/txt_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0sp"
+            android:layout_marginBottom="0dp"
+            android:text="state"
+            android:textAlignment="center"
+            android:textColor="#F8F8F8"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:orientation="horizontal"
+            android:scrollbarThumbHorizontal="@color/white"
+            android:scrollbarThumbVertical="@color/white">
+
+            <TextView
+                android:id="@+id/txt_cycle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="137dp"
+                android:text="0"
+                android:textColor="#FDFDFD"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/txt_remainM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="137dp"
+                android:text="00"
+                android:textColor="#FFFFFF"
+                android:textSize="70sp" />
+
+            <TextView
+                android:id="@+id/txt_remainS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="100dp"
+                android:layout_marginBottom="137dp"
+                android:text="00"
+                android:textColor="#FFFFFF"
+                android:textSize="40sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <SeekBar
         android:id="@+id/seekBar_1"
         android:layout_width="359dp"
         android:layout_height="15dp"
 
-        android:layout_marginBottom="70dp"
+        android:layout_marginTop="300dp"
         android:max="4"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:progressDrawable="@color/white"
+        android:scrollbarThumbHorizontal="@android:drawable/btn_default"
+        android:thumb="@drawable/baseline_keyboard_arrow_right_24"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_remainM" />
-
-    <TextView
-        android:id="@+id/txt_remainM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="150dp"
-        android:layout_marginTop="386dp"
-        android:layout_marginBottom="137dp"
-        android:text="00"
-        android:textSize="70sp"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txt_remainS"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txt_remainS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="386dp"
-        android:layout_marginEnd="150dp"
-        android:layout_marginBottom="137dp"
-        android:text="00"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/txt_remainM"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_todo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="할일"
-        android:textColor="#F4F2F4"
-        android:textColorLink="#E91E63"
-        app:iconTint="#CC1D1D"
-        app:layout_constraintBottom_toTopOf="@+id/txt_remainM"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_friends"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:text="친구와 함께 하기"
-        app:layout_constraintBottom_toTopOf="@+id/txt_remainM"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_todo" />
-
-    <TextView
-        android:id="@+id/txt_cycle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="386dp"
-        android:layout_marginBottom="137dp"
-        android:text="0"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar_1"
-        app:layout_constraintEnd_toStartOf="@+id/txt_remainM"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txt_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="state"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/txt_remainM"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_friends" />
+        app:layout_constraintTop_toTopOf="@+id/linearLayout3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

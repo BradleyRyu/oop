@@ -14,6 +14,9 @@ import com.example.myprojectapplication.databinding.FragmentTimerBinding
 
 /*
 To do
+
+//토마토 이미지 BG 컬러 #FFCDC0
+
 지금은 entry -> 타이머지만
 entry -> 타이머 설정 page -> 타이머로 바꾸기
 타이머 설정 page에서 함께할 친구, 수행할 todolist 고른 후에 -> 타이머 작동
@@ -66,14 +69,6 @@ class TimerFragment : Fragment() {
             state = this.txtState
         }
 
-
-        /*
-        //btn_friends 클릭 시 친구 페이지로 전환. 구현 안함
-        binding?.btnFriends?.setOnClickListener {
-            findNavController().navigate(R.id.action_timerFragment_to_friendsFragment)
-        }
-
-         */
 
         //seekbar 변화 감지
         seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {

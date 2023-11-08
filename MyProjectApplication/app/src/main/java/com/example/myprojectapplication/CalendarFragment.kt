@@ -65,7 +65,7 @@ class CalendarFragment : Fragment() {
         }
 
         binding?.btnTimer?.setOnClickListener {
-            findNavController().navigate(R.id.action_calenderFragment_to_timerFragment)
+            findNavController().navigate(R.id.action_calenderFragment_to_timerEntryFragment)
         }
 
 
