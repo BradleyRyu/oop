@@ -52,34 +52,28 @@ class TodoFragment : Fragment() {
             // 상단에 있는 텍스트 입력창을 통해 할 일과 언제 할 일인지를 읽고 값을 추가함
             // input year, month, day에 입력한 값을 정수로 변환하여 함수를 통해 입력 받음
 
-            val whattodo: String = binding?.inputWhattodo?.text.toString()
-            val strInputYear: String = binding?.inputYear?.text.toString()
-            val strInputMonth: String = binding?.inputMonth?.text.toString()
-            val strInputDay: String = binding?.inputDay?.text.toString()
+            val whatToDo: String? = binding?.inputWhattodo?.text.toString()
+            val inputYear: String? = binding?.inputYear?.text.toString()
+            val inputMonth: String? = binding?.inputMonth?.text.toString()
+            val inputDay: String? = binding?.inputDay?.text.toString()
 
-            // 입력받은 문자열의 유효성을 검사하는 과정
-
-            if( isValidString(whattodo, strInputYear, strInputMonth, strInputDay) ) {
-                addList( whattodo,
-                    strInputYear.let { it1 -> Integer.parseInt(it1) },
-                    strInputMonth.let { it1 -> Integer.parseInt(it1) },
-                    strInputDay.let { it1 -> Integer.parseInt(it1) },
+            // 입력받은 문자열의 유효성을 검사하는 과정. Integer.parseInt() 함수에서 널값이나 빈 칸인 값이 오면 프로그램이 오류로 종료됨
+            if( isValidString(whatToDo, inputYear, inputMonth, inputDay) ) {
+                addList( whatToDo,
+                    inputYear?.let { Integer.parseInt(it) },
+                    inputMonth?.let { Integer.parseInt(it) },
+                    inputDay?.let { Integer.parseInt(it) },
                     false
                 )
+                // 입력된 리스트를 포함하여 다시 todo리스트 정렬하고
+                // 어댑터에게 아이템이 삽입되었다는 것을 알려줌 (notifyDataSetChanged를 사용하려 했으나 안드로이드 공식 문서에서 특정 작업에 대한 notify를 쓸 것을 권장하였음.
+                binding?.recTodo?.adapter?.notifyItemInserted(sortTodoList().size)
+                // 갱신된 리스트로 어댑터를 갱신
+                binding?.recTodo?.adapter = TodoAdapter(sortTodoList())
             }
-
-            // 어댑터에게 아이템이 삽입되었다는 것을 알려줌 (notifyDataSetChanged를 사용하려 했으나 안드로이드 공식 문서에서 특정 작업에 대한 notify를 쓸 것을 권장하였음.
-            // 입력된 리스트를 포함하여 다시 todo리스트 정렬하고
-
-            binding?.recTodo?.adapter?.notifyItemInserted(sortTodoList().size)
-            // 갱신된 리스트로 어댑터를 갱신
-            binding?.recTodo?.adapter = TodoAdapter(sortTodoList())
-
             // 추가하기 버튼을 누를 시, 칸을 비움
             makeTextBoxesBlank()
         }
-        // Inflate the layout for this fragment
-
         return binding?.root
     }
 
@@ -151,7 +145,7 @@ class TodoFragment : Fragment() {
         return false
     }
 
-    // 무엇을 할지 / 언제 할지에 대한 값이 빈 문자열이거나 null이라면
+    // 무엇을 할지, 언제 할지에 대한 값이 빈 문자열이거나 null이라면
     fun isValidString(whattodo: String?, whenYear: String?, whenMonth: String?, whenDay: String?): Boolean {
         if ( whattodo.isNullOrBlank() || whenYear.isNullOrBlank() || whenMonth.isNullOrBlank() || whenDay.isNullOrBlank() ) {
             Toast.makeText(binding?.root?.context, "모든 칸에 입력 바랍니다.", Toast.LENGTH_SHORT).show()
@@ -159,5 +153,4 @@ class TodoFragment : Fragment() {
         }
         return true
     }
-
 }
