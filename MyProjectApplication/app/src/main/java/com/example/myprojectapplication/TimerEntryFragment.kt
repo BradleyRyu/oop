@@ -13,6 +13,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 
@@ -79,6 +80,7 @@ class TimerEntryFragment : Fragment() {
             setPinchZoom(true) // 확대/축소 가능
 
             // X축 설정
+            xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("월", "화", "수", "목", "금", "토", "일")) // 일~월로 x축 표시되도록 format 변경
             xAxis.position = XAxis.XAxisPosition.BOTTOM // X축을 밑으로
             xAxis.setDrawGridLines(false) // X축 라인 끔
 
@@ -99,18 +101,17 @@ class TimerEntryFragment : Fragment() {
     위와 같은 형태로 하루 지날 떄 마다 덮어쓰며 업데이트 되도록 설정하면 될 듯
      */
 
+    //수치 > 전부 f 사용해야함
     private fun addChart() {
         val entries = ArrayList<Entry>()
+        val hours = arrayOf(8f, 6f, 7f, 8.5f, 7.5f, 6.5f, 9f) // 임의의 시간 float으로 설정!
 
-        val days = arrayOf("월", "화", "수", "목", "금", "토", "일")
-        val hours = arrayOf(8f, 6f, 7f, 8.5f, 7.5f, 6.5f, 9f) // 임의 시간 float으로 설정
-
-        // 데이터 포인트를 차트에 추가
-        for (i in days.indices) {
-            entries.add(Entry(i.toFloat(), hours[i]))
+        //데이터 포인트 차례로 추가
+        for (i in hours.indices) {
+            entries.add(Entry(i.toFloat(), hours[i]))// 각 요일 0~6(실수), 해당하는 시간 add
         }
-
-        val dataSet = LineDataSet(entries, "Daily Hours") // 데이터 셋 생성
+        //아래 val dataset, lineDataSets, lineData 과정 잘 이해 안감
+        val dataSet = LineDataSet(entries, "공부한 시간") // 데이터 셋 생성
         val lineDataSets: ArrayList<ILineDataSet> = ArrayList()
         lineDataSets.add(dataSet)
 
