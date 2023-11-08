@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.example.myprojectapplication.databinding.FragmentCalendarBinding
 import com.example.myprojectapplication.databinding.FragmentTimerBinding
+import com.github.mikephil.charting.components.XAxis
 
 /*
 To do
@@ -134,6 +135,7 @@ class TimerFragment : Fragment() {
 
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
