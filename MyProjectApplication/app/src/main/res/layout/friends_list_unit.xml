@@ -16,6 +16,17 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/profile" />
 
+    <ImageButton
+        android:id="@+id/btn_popup_friends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#FFCDC0"
+        android:src="@android:drawable/btn_star_big_on"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txt_state"
+        app:layout_constraintStart_toEndOf="@+id/txt_id"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"

@@ -35,13 +35,18 @@ class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsA
                 State.ONLINE -> R.drawable.online
             })
 
+            binding.btnPopupFriends.setOnClickListener {
+                // 버튼을 눌러서 팝업을 띄운뒤 친구 삭제, 친구 시간 확인 필요
+            }
+
+
             binding.txtId.text = friend.id
 
             binding.txtState.text = when ( friend.state ) {
                 State.OFFLINE -> "OFFLINE"
                 State.ONLINE -> "ONLINE"
             }
-            // blue color F008EFF
+
             // 온,오프라인 상태에 따른 글자색 변경
             when (friend.state) {
                 State.OFFLINE -> binding.txtState.setTextColor(Color.RED)
@@ -54,6 +59,7 @@ class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsA
                 Toast.makeText(binding.root.context, "ID : ${friend.id} State : ${friend.state}",
                     Toast.LENGTH_SHORT).show()
             }
+
         }
     }
 }
