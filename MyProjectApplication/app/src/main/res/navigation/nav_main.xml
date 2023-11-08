@@ -19,8 +19,8 @@
             android:id="@+id/action_calenderFragment_to_friendsListFragment"
             app:destination="@id/friendsListFragment" />
         <action
-            android:id="@+id/action_calenderFragment_to_timerFragment"
-            app:destination="@id/timerFragment" />
+            android:id="@+id/action_calenderFragment_to_timerEntryFragment"
+            app:destination="@id/timerEntryFragment" />
     </fragment>
     <fragment
         android:id="@+id/todoFragment"
@@ -88,7 +88,19 @@
         android:label="fragment_timer"
         tools:layout="@layout/fragment_timer" >
         <action
-            android:id="@+id/action_timerFragment_to_calenderFragment"
+            android:id="@+id/action_timerFragment_to_timerEntryFragment"
+            app:destination="@id/timerEntryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/timerEntryFragment"
+        android:name="com.example.myprojectapplication.TimerEntryFragment"
+        android:label="fragment_timer_entry"
+        tools:layout="@layout/fragment_timer_entry" >
+        <action
+            android:id="@+id/action_timerEntryFragment_to_timerFragment"
+            app:destination="@id/timerFragment" />
+        <action
+            android:id="@+id/action_timerEntryFragment_to_calenderFragment"
             app:destination="@id/calenderFragment" />
     </fragment>
 </navigation>
