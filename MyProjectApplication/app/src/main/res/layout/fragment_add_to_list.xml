@@ -4,7 +4,8 @@
     android:id="@+id/frameLayout4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddToListFragment" >
+    android:background="#FFCDC0"
+    tools:context=".AddToListFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

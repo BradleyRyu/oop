@@ -60,6 +60,10 @@ class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsA
                     Toast.LENGTH_SHORT).show()
             }
 
+            binding.btnPopupFriends.setOnClickListener {
+                // 친구 삭제 및 같이하기 버튼 만들기
+            }
+
         }
     }
 }
