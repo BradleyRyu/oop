@@ -36,7 +36,6 @@ class TimerEntryFragment : Fragment() {
 
         binding = FragmentTimerEntryBinding.inflate(inflater)
 
-        // Inflate the layout for this fragment
         return binding?.root
     }
 
