@@ -6,9 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentCalendarBinding
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.Calendar
 
 class CalendarFragment : Fragment() {
 
@@ -20,6 +24,7 @@ class CalendarFragment : Fragment() {
     }
 
     // oncreate에서 화면 구성이 끝난 이후 실행될 코드
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,7 +32,12 @@ class CalendarFragment : Fragment() {
         // binding 을 얻어내면 -> xml에 들어가있는 여러 컴포넌트들을 binding의 컴포넌트로 접근할 수 있음
         binding = FragmentCalendarBinding.inflate(inflater)
         // 얻어온 calendar의 선택된 날짜에 따라 해당 연 월 일을 출력함.
-        // 어플 실행 시 날짜를 클릭하지 않으면 오늘 날짜가 뜨지 않는 문제로 추가적인 코드가 필요함
+        // 어플 실행 시 날짜를 클릭하지 않으면 오늘 날짜가 뜨지 않는 문제로 추가적인 코드
+        val calendar: Calendar = Calendar.getInstance()
+        val todayYear: Int = calendar.get(Calendar.YEAR)
+        val todayMonth: Int = calendar.get(Calendar.MONTH) + 1
+        val todayDay: Int = calendar.get(Calendar.DATE)
+        binding?.txtSelectedDate?.text = "${todayYear}년 ${todayMonth}월 ${todayDay}일"
         binding?.calendar?.setOnDateChangeListener { _, yyyy, mm, dd ->
                 // to_do list와 연계를 위해, 선택된 날짜를 변수에 저장하여 활용함
             val selectedYear: Int = yyyy
@@ -67,7 +77,5 @@ class CalendarFragment : Fragment() {
         binding?.btnTimer?.setOnClickListener {
             findNavController().navigate(R.id.action_calenderFragment_to_timerEntryFragment)
         }
-
-
     }
 }
