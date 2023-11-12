@@ -48,12 +48,6 @@ class CalendarFragment : Fragment() {
             binding?.recTodoOfTheDay?.layoutManager = LinearLayoutManager(context)
         }
 
-        /* 앱 실행 시 오늘의 날짜를 어떻게 구현할지 ...?
-        var selectYear: Int = LocalDate.now().year
-        var selectedMonth: Int = LocalDate.now().monthValue
-        var selectedDay: Int = LocalDate.now().dayOfMonth
-         */
-
         // Inflate the layout for this fragment
         return binding?.root
     }
@@ -69,11 +63,11 @@ class CalendarFragment : Fragment() {
         binding?.btnUserId?.setOnClickListener {
             findNavController().navigate(R.id.action_calenderFragment_to_userFragment)
         }
-
+        //친구 List로 이동
         binding?.btnFriendslist?.setOnClickListener {
             findNavController().navigate(R.id.action_calenderFragment_to_friendsListFragment)
         }
-
+        //타이머로 이동
         binding?.btnTimer?.setOnClickListener {
             findNavController().navigate(R.id.action_calenderFragment_to_timerEntryFragment)
         }

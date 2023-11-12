@@ -1,12 +1,15 @@
 package com.example.myprojectapplication
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.databinding.FragmentTodoBinding
 
 class TodoFragment : Fragment() {
@@ -19,19 +22,33 @@ class TodoFragment : Fragment() {
 
      */
 
-    private var tempTodolist: Array<TodoList> = arrayOf()
+    private var todoList: MutableList<TodoList> = mutableListOf()
+
+    // ItemTouchHelper를 선언
+    private val itemTouchHelper by lazy {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // 스와이프 시 해당 아이템 삭제
+                val position = viewHolder.adapterPosition
+                (binding?.recTodo?.adapter as? TodoAdapter)?.removeList(position)
+            }
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /* 추후 스피너를 통해 구현되면 값을 넘겨줄 때 사용할 값
-        var spinner_year = arrayOf("2023년", "2024년", "2025년")
-        var spinner_month = arrayOf("1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월")
-        var spinner_day = arrayOf("1일", "2일", "3일", "4일", "5일")
-        //test
-        val spinner_year = arrayOf("2023년", "2024년", "2025년")
-        val spinner_month = DateFormatSymbols().months
-        val spinner_day = DateFormatSymbols().shortWeekdays
-         */
+
     }
 
     override fun onCreateView(
@@ -42,8 +59,13 @@ class TodoFragment : Fragment() {
         //layoutmanager: 리사이클러뷰에 어떻게 아이템을 쌓을 것인가, 어떤 형식으로 보여줄 것이냐
         binding?.recTodo?.layoutManager = LinearLayoutManager(context)
 
+        // ItemTouchHelper를 RecyclerView에 연결
+        itemTouchHelper.attachToRecyclerView(binding?.recTodo)
+
         // 기존 리스트를 정렬하고 그 값을 정렬된 리스트로 어댑터 갱신
-        binding?.recTodo?.adapter = TodoAdapter(sortTodoList())
+        // binding?.recTodo?.adapter = TodoAdapter(sortTodoList(todoList))
+
+
 
         // 할 일을 추가하는 버튼을 클릭하면 생기는 이벤트.
         binding?.btnAdd?.setOnClickListener {
@@ -60,20 +82,17 @@ class TodoFragment : Fragment() {
             // 입력받은 문자열의 유효성을 검사하는 과정. Integer.parseInt() 함수에서 널값이나 빈 칸인 값이 오면 프로그램이 오류로 종료됨
             if( isValidString(whatToDo, inputYear, inputMonth, inputDay) ) {
                 addList( whatToDo,
-                    inputYear?.let { Integer.parseInt(it) },
-                    inputMonth?.let { Integer.parseInt(it) },
-                    inputDay?.let { Integer.parseInt(it) },
+                    inputYear?.toInt(),
+                    inputMonth?.toInt(),
+                    inputDay?.toInt(),
                     false
                 )
-                // 입력된 리스트를 포함하여 다시 todo리스트 정렬하고
-                // 어댑터에게 아이템이 삽입되었다는 것을 알려줌 (notifyDataSetChanged를 사용하려 했으나 안드로이드 공식 문서에서 특정 작업에 대한 notify를 쓸 것을 권장하였음.
-                binding?.recTodo?.adapter?.notifyItemInserted(sortTodoList().size)
-                // 갱신된 리스트로 어댑터를 갱신
-                binding?.recTodo?.adapter = TodoAdapter(sortTodoList())
+                // binding?.recTodo?.adapter = TodoAdapter(sortTodoList(todoList))
             }
             // 추가하기 버튼을 누를 시, 칸을 비움
             makeTextBoxesBlank()
         }
+
         return binding?.root
     }
 
@@ -88,15 +107,14 @@ class TodoFragment : Fragment() {
      */
 
     // todolist array를 연 월 일 순으로 정렬하는 함수
-    fun sortTodoList(): Array<TodoList> {
-        val sortedTodolist = tempTodolist.sortedWith(
+    private fun sortTodoList(todoList: MutableList<TodoList>): MutableList<TodoList> {
+        return todoList.sortedWith(
             compareBy(
                 { it.year_Todo },
                 { it.month_Todo },
                 { it.day_Todo }
             )
-        ).toTypedArray()
-        return sortedTodolist
+        ).toMutableList()
     }
 
     /*, whentodo_year, whentodo_month, whentodo_day*/
@@ -110,14 +128,21 @@ class TodoFragment : Fragment() {
         donetodo: Boolean
     ): Boolean {
         return if( isValidDate(whentodo_year, whentodo_month, whentodo_day) ) {
-            tempTodolist += TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo)
+            todoList.add(TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
+            // 어댑터에게 아이템이 삽입되었다는 것을 알려줌 (notifyDataSetChanged를 사용하려 했으나 안드로이드 공식 문서에서 특정 작업에 대한 notify를 쓸 것을 권장하였음.
+            todoList = sortTodoList(todoList)  // 초기 어댑터를 만들기 전에 목록을 정렬합니다.
+            // 입력된 리스트를 포함하여 다시 todo리스트 정렬하고
+            binding?.recTodo?.adapter?.notifyItemInserted(todoList.size)
+            // 갱신된 리스트로 어댑터를 갱신
+            binding?.recTodo?.adapter = TodoAdapter(todoList)
+            Log.d("TodoFragment", "Item added. New item count: ${todoList.size}")
             true
         } else {
             false
         }
     }
     //사용자 편의를 위해 할 일에 적은 것은 남겨둠
-    fun makeTextBoxesBlank() {
+    private fun makeTextBoxesBlank() {
         binding?.inputWhattodo?.setText("")
         binding?.inputYear?.setText("")
         binding?.inputMonth?.setText("")
@@ -125,32 +150,37 @@ class TodoFragment : Fragment() {
     }
 
     // 입력한 날짜 값이 유효한 값인지 검사함.
-    fun isValidDate(year: Int?, month: Int?, day: Int?): Boolean {
-        if (year != null && month != null && day != null) {
-            if (year >= 2023 && (month in 1..12)) {
-                if (month % 2 == 1 || month == 8) {
-                    if (day in 1..31) return true
-                } else if (month % 2 == 0 && month != 2) {
-                    if (day in 1..30) return true
-                } else {
-                    if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
-                        if (day in 1..29) return true
-                    } else {
-                        if (day in 1..28) return true
+
+    private fun isValidDate(year: Int?, month: Int?, day: Int?): Boolean {
+        return when {
+            (year != null) && (month != null) && (day != null) && (year >= 2023) && (month in 1..12) -> {
+                when(month) {
+                    1, 3, 5, 7, 8, 10, 12 -> day in 1..31
+                    4, 6, 9, 11 -> day in 1..30
+                    2 -> {
+                        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) day in 1..29
+                        else day in 1..28
+                    }
+                    else -> {
+                        Toast.makeText(binding?.root?.context, "날짜가 잘못 입력되었으니 확인 바랍니다.", Toast.LENGTH_SHORT).show()
+                        false
                     }
                 }
             }
+            else -> {
+                Toast.makeText(binding?.root?.context, "날짜가 잘못 입력되었으니 확인 바랍니다.", Toast.LENGTH_SHORT).show()
+                false
+            }
         }
-        Toast.makeText(binding?.root?.context, "날짜가 잘못 입력되었으니 확인 바랍니다.", Toast.LENGTH_SHORT).show()
-        return false
     }
 
     // 무엇을 할지, 언제 할지에 대한 값이 빈 문자열이거나 null이라면
-    fun isValidString(whattodo: String?, whenYear: String?, whenMonth: String?, whenDay: String?): Boolean {
+    private fun isValidString(whattodo: String?, whenYear: String?, whenMonth: String?, whenDay: String?): Boolean {
         if ( whattodo.isNullOrBlank() || whenYear.isNullOrBlank() || whenMonth.isNullOrBlank() || whenDay.isNullOrBlank() ) {
             Toast.makeText(binding?.root?.context, "모든 칸에 입력 바랍니다.", Toast.LENGTH_SHORT).show()
             return false
         }
         return true
     }
+
 }
