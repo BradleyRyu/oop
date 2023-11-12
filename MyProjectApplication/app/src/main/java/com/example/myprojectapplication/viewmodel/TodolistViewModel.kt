@@ -1,10 +1,10 @@
 package com.example.myprojectapplication.viewmodel
-
+/*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myprojectapplication.TodoList
 
-/*
+
 class TodolistViewModel {
     private var _todo = MutableLiveData<TodoList>()
     val todo: LiveData<TodoList> get() = _todo
@@ -15,5 +15,4 @@ class TodolistViewModel {
         }
     }
 }
-
 */
