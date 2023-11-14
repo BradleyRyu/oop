@@ -1,21 +1,53 @@
 package com.example.myprojectapplication
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myprojectapplication.databinding.FragmentFriendsListBinding
 import com.example.myprojectapplication.databinding.FriendsListUnitBinding
-import com.example.myprojectapplication.viewmodel.FriendsViewModel
-class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsAdapter.Holder>() {
+import com.example.myprojectapplication.databinding.FriendslistPopupBinding
+import com.example.myprojectapplication.viewmodel.FriendsViewModels
 
-//    val viewModel: FriendsViewModel by  activityViewModels() // viewmodel init
+//class FriendslistPopupFragment: Fragment() {
+//    var binding: FriendslistPopupBinding? = null
+//    val viewModel: FriendsViewModels by activityViewModels()
+//
+//    override fun onCreateView(
+//        inflater: LayoutInflater, container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//        binding = FriendslistPopupBinding.inflate(inflater)
+//        return binding?.root
+//    }
+//
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        viewModel.id.observe(viewLifecycleOwner) {
+//            binding?.popupTitle?.text = viewModel.id.value
+//        }
+//
+//        binding?.btnDelete?.setOnClickListener {
+//            Toast.makeText(binding?.root?.context, "Delete!!!",
+//                Toast.LENGTH_SHORT).show()
+//        }
+//
+//        binding?.btnWithfriend?.setOnClickListener {
+//            Toast.makeText(binding?.root?.context, "With Friend!!!",
+//                Toast.LENGTH_SHORT).show()
+//        }
+//    }
+//}
+
+class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = FriendsListUnitBinding.inflate(LayoutInflater.from(parent.context))
@@ -30,16 +62,6 @@ class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsA
 
     class Holder(private val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(friend: Friends) {
-            binding.imageView.setImageResource( when( friend.state ) {
-                State.OFFLINE -> R.drawable.offline
-                State.ONLINE -> R.drawable.online
-            })
-
-            binding.btnPopupFriends.setOnClickListener {
-                // 버튼을 눌러서 팝업을 띄운뒤 친구 삭제, 친구 시간 확인 필요
-            }
-
-
             binding.txtId.text = friend.id
 
             binding.txtState.text = when ( friend.state ) {
@@ -47,21 +69,30 @@ class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsA
                 State.ONLINE -> "ONLINE"
             }
 
-            // 온,오프라인 상태에 따른 글자색 변경
-            when (friend.state) {
+            binding.btnPopupFriends.setImageResource( when ( friend.state ) {
+                State.OFFLINE -> R.drawable.offline
+                State.ONLINE -> R.drawable.online
+            })
+
+            when (friend.state) { // 온,오프라인 상태에 따른 글자색 변경
                 State.OFFLINE -> binding.txtState.setTextColor(Color.RED)
                 State.ONLINE -> binding.txtState.setTextColor(Color.BLUE)
             }
 
-
-            // 토스트 하기 위한 코드
-            binding.root.setOnClickListener {
+            binding.root.setOnClickListener {// 토스트 하기 위한 코드
                 Toast.makeText(binding.root.context, "ID : ${friend.id} State : ${friend.state}",
                     Toast.LENGTH_SHORT).show()
             }
 
+//            binding.btnPopupFriends.setOnClickListener {
+//
+//            }
+
             binding.btnPopupFriends.setOnClickListener {
-                // 친구 삭제 및 같이하기 버튼 만들기
+                val popupView = LayoutInflater.from(it.context).inflate(R.layout.friendslist_popup, null)
+                val mBuilder = AlertDialog.Builder(it.context)
+                    .setView(popupView)
+                mBuilder.show()
             }
 
         }
