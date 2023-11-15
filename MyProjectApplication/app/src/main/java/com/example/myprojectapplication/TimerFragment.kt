@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import android.media.SoundPool
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -50,6 +51,10 @@ class TimerFragment : Fragment() {
     private var seekBar: SeekBar? = null
     private var state: TextView? = null
 
+    //alarmSound
+    private val soundPool = SoundPool.Builder().build()
+    private var beepSound: Int? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -77,7 +82,6 @@ class TimerFragment : Fragment() {
                 if (fromUser) {
                     val selectedCycles = progress
                     remainCycle?.text = selectedCycles.toString()
-                    startStudyCycle(selectedCycles)
                 }
             }
 
@@ -87,11 +91,15 @@ class TimerFragment : Fragment() {
                 currentCountTimer = null
             }
 
-
+            //onStopTrackingTouch에서 타이머 시작해야 중복으로 울리는 문제 사라짐.
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                // Cycle 사용 버전에서는 사용되지 않음
+                val cycles = seekBar?.progress ?: 0
+                startStudyCycle(cycles)
             }
         })
+
+        //사운드풀 설정
+        beepSound = soundPool.load(requireContext(), R.raw.alarmsound, 1)
     }
 
     //학습사이클 시작 함수 +state 변수 추가하여 상단에 상태 표시
@@ -131,6 +139,11 @@ class TimerFragment : Fragment() {
                         startStudyCycle(remainCycles)
                     }
                 }
+
+                //타이머 끝날 때 beepsound 울림
+                beepSound?.let{
+                    soundPool.play(it, 1F, 1F, 0, 0, 1F)
+                }
             }
 
         }
@@ -144,5 +157,7 @@ class TimerFragment : Fragment() {
         remainSTextView = null
         remainCycle = null
         seekBar = null
+
+        soundPool.release()
     }
 }
