@@ -122,28 +122,29 @@ class TimerFragment : Fragment() {
             override fun onFinish() {
                 var remainCycles = cycles
 
-                //beep 사운드: 네비게이션 전환될 때에는 실행하지 않음.
-                val beep = beepSound?.let{
-                    soundPool.play(it, 1F, 1F, 0, 0, 1F)
-                }
-
                 if (time == STUDY_TIME) {
-                    beep
+                    //beep 사운드
+                    beepSound?.let{
+                        soundPool.play(it, 1F, 1F, 0, 0, 1F)
+                    }
                     startRestCycle(remainCycles)
                 } else {
                     remainCycles--
                     remainCycle?.text = remainCycles.toString()
 
-                    //타이머 다 끝나면 다시 TimerEntryFragment로 이동
+                    //타이머 다 끝나면 다시 TimerEntryFragment로 이동, beep 사운드: 네비게이션 전환될 때에는 실행하지 않음.
                     when(remainCycles){
                         0 -> findNavController().navigate(R.id.action_timerFragment_to_timerEntryFragment)
                         else -> {
+                            beepSound?.let{
+                                soundPool.play(it, 1F, 1F, 0, 0, 1F)
+                            }
                             startStudyCycle(remainCycles)
-                            beep
                         }
                     }
                 }
             }
+
 
         }
     }
