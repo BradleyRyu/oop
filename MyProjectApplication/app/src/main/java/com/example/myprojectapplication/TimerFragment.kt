@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import android.graphics.Color
 import android.media.SoundPool
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -16,25 +17,13 @@ import com.github.mikephil.charting.components.XAxis
 
 /*
 To do
-
 //토마토 이미지 BG 컬러 #FFCDC0
-
-지금은 entry -> 타이머지만
-entry -> 타이머 설정 page -> 타이머로 바꾸기
-타이머 설정 page에서 함께할 친구, 수행할 todolist 고른 후에 -> 타이머 작동
 
 0. 캘린더에서 작성한 할일 목록 선택하여 해당 목록에 대한 타이머
     cycle 수를 다시 캘린더로 넘겨 학습양 체크
-    //뷰모델로 받아오기? or 번들로 todolist 데이터 받기
-    
-00. 친구와 함께 하기 기능
-    서버, 데이터베이스 구현 방식에 따라서
+    //뷰모델로 받아오기
 
-1. 폰트, 배경 색상 등 변경 (배경 -> app/values/colors.xml 파일 변경)
-2. seekbar, 버튼 아이콘 변경
-3. 가능하면 학습 중일 때와 휴식 중일 때 텍스트 색깔 바꾸기
-4. 휴식 타이머 시작 될 때 휴식 음악 (MediaPlayer 사용)
-5. 타이머 효과음 tick, 종료음 등 (soundpool 이용)
+1. UI 더 보기 편하게 변경
  */
 
 class TimerFragment : Fragment() {
@@ -105,6 +94,7 @@ class TimerFragment : Fragment() {
     //학습사이클 시작 함수 +state 변수 추가하여 상단에 상태 표시
     private fun startStudyCycle(cycles: Int) {
         currentCountTimer = createCountDown(STUDY_TIME, cycles, true)
+        binding?.txtState?.setTextColor(Color.RED)
         currentCountTimer?.start()
         state?.text="Study"
     }
@@ -112,6 +102,7 @@ class TimerFragment : Fragment() {
     //휴식사이클 시작 함수
     private fun startRestCycle(cycles: Int) {
         currentCountTimer = createCountDown(REST_TIME, cycles, false)
+        binding?.txtState?.setTextColor(Color.BLUE)
         currentCountTimer?.start()
         state?.text="Rest"
     }
@@ -130,19 +121,27 @@ class TimerFragment : Fragment() {
             //학습타이머 끝날 경우 휴식타이머, 휴식 타이머 끝나면 사이클 감소
             override fun onFinish() {
                 var remainCycles = cycles
+
+                //beep 사운드: 네비게이션 전환될 때에는 실행하지 않음.
+                val beep = beepSound?.let{
+                    soundPool.play(it, 1F, 1F, 0, 0, 1F)
+                }
+
                 if (time == STUDY_TIME) {
+                    beep
                     startRestCycle(remainCycles)
                 } else {
                     remainCycles--
                     remainCycle?.text = remainCycles.toString()
-                    if (remainCycles > 0) {
-                        startStudyCycle(remainCycles)
-                    }
-                }
 
-                //타이머 끝날 때 beepsound 울림
-                beepSound?.let{
-                    soundPool.play(it, 1F, 1F, 0, 0, 1F)
+                    //타이머 다 끝나면 다시 TimerEntryFragment로 이동
+                    when(remainCycles){
+                        0 -> findNavController().navigate(R.id.action_timerFragment_to_timerEntryFragment)
+                        else -> {
+                            startStudyCycle(remainCycles)
+                            beep
+                        }
+                    }
                 }
             }
 
