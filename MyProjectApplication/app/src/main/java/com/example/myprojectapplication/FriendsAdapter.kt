@@ -10,42 +10,47 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.databinding.FriendsListUnitBinding
 import com.example.myprojectapplication.databinding.FriendslistPopupBinding
+import com.example.myprojectapplication.repository.FriendRepository
 import com.example.myprojectapplication.viewmodel.FriendsViewModels
 
-//class FriendslistPopupFragment: Fragment() {
-//    var binding: FriendslistPopupBinding? = null
-//    val viewModel: FriendsViewModels by activityViewModels()
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        binding = FriendslistPopupBinding.inflate(inflater)
-//        return binding?.root
-//    }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        viewModel.id.observe(viewLifecycleOwner) {
-//            binding?.popupTitle?.text = viewModel.id.value
-//        }
-//
-//        binding?.btnDelete?.setOnClickListener {
-//            Toast.makeText(binding?.root?.context, "Delete!!!",
-//                Toast.LENGTH_SHORT).show()
-//        }
-//
-//        binding?.btnWithfriend?.setOnClickListener {
-//            Toast.makeText(binding?.root?.context, "With Friend!!!",
-//                Toast.LENGTH_SHORT).show()
-//        }
-//    }
-//}
+class FriendslistPopupFragment: Fragment() {
+    var binding: FriendslistPopupBinding? = null
+    val viewModel: FriendsViewModels by activityViewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FriendslistPopupBinding.inflate(inflater)
+        return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.id.observe(viewLifecycleOwner) {
+            binding?.popupTitle?.text = viewModel.id.value
+        }
+
+        binding?.btnDelete?.setOnClickListener {
+            println("Helllo")
+            Toast.makeText(binding?.root?.context, "Delete!!!",
+                Toast.LENGTH_SHORT).show()
+        }
+
+        binding?.btnWithfriend?.setOnClickListener {
+            Toast.makeText(binding?.root?.context, "With Friend!!!",
+                Toast.LENGTH_SHORT).show()
+        }
+    }
+}
 
 class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsAdapter.Holder>() {
 
@@ -62,21 +67,33 @@ class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsA
 
     class Holder(private val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(friend: Friends) {
-            binding.txtId.text = friend.id
+            class holderViewModel: ViewModel() {
+                private val repository = FriendRepository()
+                private val _id = MutableLiveData<String>()
+                val id: LiveData<String> get() = _id
 
-            binding.txtState.text = when ( friend.state ) {
-                State.OFFLINE -> "OFFLINE"
-                State.ONLINE -> "ONLINE"
+
+                private val _state = MutableLiveData<String>()
+                val state: LiveData<String> get() = _state
+
+                init {
+                    repository.observeFriends(_id)
+                }
+
             }
 
-            binding.btnPopupFriends.setImageResource( when ( friend.state ) {
-                State.OFFLINE -> R.drawable.offline
-                State.ONLINE -> R.drawable.online
-            })
+            binding.txtId.text = friend.id.toString()
 
-            when (friend.state) { // 온,오프라인 상태에 따른 글자색 변경
-                State.OFFLINE -> binding.txtState.setTextColor(Color.RED)
-                State.ONLINE -> binding.txtState.setTextColor(Color.BLUE)
+            binding.txtState.text = friend.state.toString()
+
+//            binding.btnPopupFriends.setImageResource( when ( friend.state.toString() ) {
+//                "OFFLINE" -> R.drawable.offline
+//                "ONLINE" -> R.drawable.online
+//            })
+
+            when (friend.state.toString()) { // 온,오프라인 상태에 따른 글자색 변경
+                "OFFLINE" -> binding.txtState.setTextColor(Color.RED)
+                "ONLINE" -> binding.txtState.setTextColor(Color.BLUE)
             }
 
             binding.root.setOnClickListener {// 토스트 하기 위한 코드
@@ -84,14 +101,11 @@ class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsA
                     Toast.LENGTH_SHORT).show()
             }
 
-//            binding.btnPopupFriends.setOnClickListener {
-//
-//            }
-
             binding.btnPopupFriends.setOnClickListener {
                 val popupView = LayoutInflater.from(it.context).inflate(R.layout.friendslist_popup, null)
                 val mBuilder = AlertDialog.Builder(it.context)
                     .setView(popupView)
+
                 mBuilder.show()
             }
 

@@ -20,9 +20,9 @@ class FriendsListFragment : Fragment() {
     val viewModel: FriendsViewModels by activityViewModels()
 
     val friends = arrayOf(
-        Friends("Goosmos", State.OFFLINE),
-        Friends("Hoo", State.ONLINE),
-        Friends("Koo", State.OFFLINE)
+//        Friends("Goosmos", State.OFFLINE),
+//        Friends("Hoo", State.ONLINE),
+        Friends(0)
     )
 
     override fun onCreateView(
