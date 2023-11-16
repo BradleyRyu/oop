@@ -24,6 +24,8 @@ To do
     //뷰모델로 받아오기
 
 1. UI 더 보기 편하게 변경
+
+2. media player 사용 휴식 사이클에 음악 넣기
  */
 
 class TimerFragment : Fragment() {

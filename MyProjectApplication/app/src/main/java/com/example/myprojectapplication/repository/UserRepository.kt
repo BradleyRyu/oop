@@ -33,21 +33,37 @@ class UserRepository {
 
     // 할일 항목 추가
     fun addTodoItem(id: String, newItem: TodoList) {
-        val currentUser = userRef.child(id).getValue(UserDataClass::class.java) ?: return
-        val updatedTodoList = currentUser.todo.toMutableList()
-        updatedTodoList.add(newItem)
-        val updatedUser = currentUser.copy(todo = updatedTodoList)
-        updateUser(id, updatedUser)
+        userRef.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val currentUser = snapshot.getValue(UserDataClass::class.java) ?: return
+                val updatedTodoList = currentUser.todo.toMutableList()
+                updatedTodoList.add(newItem)
+                val updatedUser = currentUser.copy(todo = updatedTodoList)
+                updateUser(id, updatedUser)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // 에러 처리
+            }
+        })
     }
 
     // 할일 항목 제거
     fun removeTodoItem(id: String, index: Int) {
-        val currentUser = userRef.child(id).getValue(UserDataClass::class.java) ?: return
-        if (index >= 0 && index < currentUser.todo.size) {
-            val updatedTodoList = currentUser.todo.toMutableList()
-            updatedTodoList.removeAt(index)
-            val updatedUser = currentUser.copy(todo = updatedTodoList)
-            updateUser(id, updatedUser)
-        }
+        userRef.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val currentUser = snapshot.getValue(UserDataClass::class.java) ?: return
+                if (index >= 0 && index < currentUser.todo.size) {
+                    val updatedTodoList = currentUser.todo.toMutableList()
+                    updatedTodoList.removeAt(index)
+                    val updatedUser = currentUser.copy(todo = updatedTodoList)
+                    updateUser(id, updatedUser)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // 에러 처리
+            }
+        })
     }
 }
