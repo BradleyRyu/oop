@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.databinding.FragmentTodoBinding
+import com.example.myprojectapplication.viewmodel.TodoViewModel
 
 class TodoFragment : Fragment() {
 
@@ -22,6 +24,7 @@ class TodoFragment : Fragment() {
      */
 
     private var todoList: MutableList<TodoList> = mutableListOf()
+    val viewModel: TodoViewModel by activityViewModels()
 
     // ItemTouchHelper를 선언 ( recycler view에 삭제를 위한 swipe를 지원하는 유틸리티 클래스. swipe가 일어나기 전까지는 불릴 일이 없으므로, by lazy로 선언함.)
     private val itemTouchHelper by lazy {
@@ -128,8 +131,10 @@ class TodoFragment : Fragment() {
             todoList = sortTodoList(todoList)  // 초기 어댑터를 만들기 전에 목록을 정렬합니다.
             // 입력된 리스트를 포함하여 다시 todo리스트 정렬하고
             binding?.recTodo?.adapter?.notifyItemInserted(todoList.size)
+//            viewModel.addTodoItem("users", TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
             // 정렬된 리스트로 어댑터 갱신
             binding?.recTodo?.adapter = TodoAdapter(todoList)
+            viewModel.addTodoItem("temp", TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
             true
         } else {
             false

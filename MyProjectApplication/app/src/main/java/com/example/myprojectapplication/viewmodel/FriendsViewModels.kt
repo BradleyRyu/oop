@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.repository.UserRepository
-data class UserDataClass(val id: String, val todo: List<TodoList>, val time: Int, val state: Boolean)
+data class UserDataClass(val id: String, val todo: List<TodoList>, var time: Int = 0 , var state: Boolean = false)
 
 class TodoViewModel : ViewModel() {
     private val todoRepository = UserRepository()

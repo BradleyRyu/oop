@@ -33,6 +33,7 @@ class FriendsListFragment : Fragment() {
         binding?.recFriends?.layoutManager = LinearLayoutManager(this.context)
         binding?.recFriends?.adapter = FriendsAdapter(friends)
         return binding?.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
