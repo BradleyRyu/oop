@@ -6,14 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.databinding.FriendsListUnitBinding
 import com.example.myprojectapplication.databinding.FriendslistPopupBinding
@@ -48,18 +46,28 @@ class FriendslistPopupFragment: Fragment() {
     }
 }
 
-class FriendsAdapter(val friends: Array<Friends>): RecyclerView.Adapter<FriendsAdapter.Holder>() {
+class FriendsAdapter(val friends: List<Friends>?): RecyclerView.Adapter<FriendsAdapter.Holder>() {
+    //파라미터를 수정해서 파이어베이스 데이터를 읽어올 수 있도록 할 것
+
+    class ViewHolder(val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind(friend: Friends?) {
+            friend?.let {
+                binding.txtId.text = it.id.toString()
+                binding.txtState.text = it.state.toString()
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = FriendsListUnitBinding.inflate(LayoutInflater.from(parent.context))
         return Holder(binding)
     }
 
-    override fun getItemCount() = friends.size
-
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.bind(friends[position])
+        TODO("Not yet implemented")
     }
+
+    override fun getItemCount() = friends?.size?: 0
 
     class Holder(private val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(friend: Friends) {

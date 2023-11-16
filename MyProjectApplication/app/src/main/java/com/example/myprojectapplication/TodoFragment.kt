@@ -116,7 +116,7 @@ class TodoFragment : Fragment() {
     }
 
     /*, whentodo_year, whentodo_month, whentodo_day*/
-
+    val id = "asdf"
     //addList로 넘어 온 값들의 유효성 검사 함수
     private fun addList(
         whattodo: String?,
@@ -134,7 +134,7 @@ class TodoFragment : Fragment() {
 //            viewModel.addTodoItem("users", TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
             // 정렬된 리스트로 어댑터 갱신
             binding?.recTodo?.adapter = TodoAdapter(todoList)
-            viewModel.addTodoItem("temp", TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
+            viewModel.addTodoItem(id, TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
             true
         } else {
             false

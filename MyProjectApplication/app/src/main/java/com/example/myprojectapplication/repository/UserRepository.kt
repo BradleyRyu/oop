@@ -33,7 +33,7 @@ class UserRepository {
 
     // 할일 항목 추가
     fun addTodoItem(id: String, newItem: TodoList) {
-        userRef.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+        userRef.child(id).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val currentUser = snapshot.getValue(UserDataClass::class.java) ?: return
                 val updatedTodoList = currentUser.todo.toMutableList()
@@ -46,6 +46,7 @@ class UserRepository {
                 // 에러 처리
             }
         })
+        userRef.setValue(id, newItem)
     }
 
     // 할일 항목 제거
