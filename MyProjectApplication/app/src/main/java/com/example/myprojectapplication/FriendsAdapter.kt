@@ -18,11 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.databinding.FriendsListUnitBinding
 import com.example.myprojectapplication.databinding.FriendslistPopupBinding
 import com.example.myprojectapplication.repository.FriendRepository
-import com.example.myprojectapplication.viewmodel.FriendsViewModels
+import com.example.myprojectapplication.viewmodel.TodoViewModel
 
 class FriendslistPopupFragment: Fragment() {
     var binding: FriendslistPopupBinding? = null
-    val viewModel: FriendsViewModels by activityViewModels()
+    val viewModel: TodoViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,10 +34,6 @@ class FriendslistPopupFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.id.observe(viewLifecycleOwner) {
-            binding?.popupTitle?.text = viewModel.id.value
-        }
 
         binding?.btnDelete?.setOnClickListener {
             println("Helllo")
