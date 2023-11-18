@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/calenderFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/baseline_calendar_month"
+        android:title="Calendar" />
+    <item
+        android:id="@+id/todoFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/baseline_format_list_bulleted"
+        android:title="Todo" />
+    <item
+        android:id="@+id/timerEntryFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/baseline_timer"
+        android:title="Timer" />
+    <item
+        android:id="@+id/friendsListFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/baseline_supervised_user_circle"
+        android:title="Friends" />
+    <item
+        android:id="@+id/setUserFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/baseline_settings_accessibility_24"
+        android:title="About Me" />
+</menu>
