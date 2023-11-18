@@ -24,7 +24,6 @@ class TodoViewModel : ViewModel() {
         todoRepository.addTodoItem(id, newItem)
     }
 
-
     // 할일 항목 제거
     fun removeTodoItem(id: String, index: Int) {
         todoRepository.removeTodoItem(id, index)

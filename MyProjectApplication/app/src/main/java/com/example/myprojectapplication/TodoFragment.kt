@@ -25,6 +25,7 @@ class TodoFragment : Fragment() {
 
     private var todoList: MutableList<TodoList> = mutableListOf()
     val viewModel: TodoViewModel by activityViewModels()
+    val id = "asdf"
 
     // ItemTouchHelper를 선언 ( recycler view에 삭제를 위한 swipe를 지원하는 유틸리티 클래스. swipe가 일어나기 전까지는 불릴 일이 없으므로, by lazy로 선언함.)
     private val itemTouchHelper by lazy {
@@ -46,6 +47,7 @@ class TodoFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 //만약 recTodo의 어댑터가 TodoAdapter의 인스턴스(메모리에 올라간 객체)라면, TodoAdapter의 removeList를 사용해 해당 위치의 아이템을 제거함.
                 (binding?.recTodo?.adapter as? TodoAdapter)?.removeList(position)
+                viewModel.removeTodoItem(id, position)
             }
         })
     }
@@ -116,7 +118,7 @@ class TodoFragment : Fragment() {
     }
 
     /*, whentodo_year, whentodo_month, whentodo_day*/
-    val id = "asdf"
+
     //addList로 넘어 온 값들의 유효성 검사 함수
     private fun addList(
         whattodo: String?,
