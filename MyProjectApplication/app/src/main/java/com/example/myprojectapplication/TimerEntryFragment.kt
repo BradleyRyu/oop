@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentTimerEntryBinding
+import com.example.myprojectapplication.viewmodel.TodoViewModel
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -15,6 +18,12 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import java.time.LocalDate
+import kotlinx.datetime.*
+
+
+//리사이클러뷰 어댑터는 작성해둠
+
 
 
 /* Chart xml code
@@ -26,7 +35,12 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 class TimerEntryFragment : Fragment() {
 
     var binding:FragmentTimerEntryBinding? = null
-    var chart:LineChart?=null
+    var chart:LineChart?=null //프라이빗 붙여야 하는지?
+
+    val id = "test"
+    val viewModel: TodoViewModel by activityViewModels()
+    private var todoList: MutableList<TodoList> = mutableListOf()
+    private var todayList: MutableList<TodoList> = mutableListOf()
 
     //바인딩 처리
     override fun onCreateView(
@@ -35,7 +49,7 @@ class TimerEntryFragment : Fragment() {
     ): View? {
 
         binding = FragmentTimerEntryBinding.inflate(inflater)
-
+        binding?.recShowToDo?.layoutManager = LinearLayoutManager(context)
         return binding?.root
     }
 
@@ -125,6 +139,16 @@ class TimerEntryFragment : Fragment() {
     private fun setData() {
         // 차트 데이터 갱신 함수
         chart?.invalidate() // 차트 데이터 변경 시 호출
+    }
+
+    private fun getTodayTodoList(todoList: MutableList<TodoList>): MutableList<TodoList> {
+        val today = Clock.System.todayAt(TimeZone.currentSystemDefault())
+
+        return todoList.filter {
+            it.year_Todo == today.year &&
+                    it.month_Todo == today.monthNumber &&
+                    it.day_Todo == today.dayOfMonth
+        }.toMutableList()
     }
 
 
