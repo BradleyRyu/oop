@@ -50,30 +50,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_MoveCalender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Calender" />
-
-            <Button
-                android:id="@+id/btn_MoveTodo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Add To Do" />
-
-            <Button
-                android:id="@+id/btn_MoveFriends"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Friends" />
-
-        </LinearLayout>
+            android:orientation="horizontal"/>
 
     </LinearLayout>
 

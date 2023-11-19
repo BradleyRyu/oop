@@ -43,6 +43,11 @@ class TimerEntryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding?.btnMoveTimer?.setOnClickListener {
+            findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment)
+        }
+
+        /* 버튼 삭제함. 추가적인 버튼 필요하면 이미지 버튼으로 새로 만들기
         binding?.btnMoveCalender?.setOnClickListener {
             findNavController().navigate(R.id.action_timerEntryFragment_to_calenderFragment)
         }
@@ -51,13 +56,11 @@ class TimerEntryFragment : Fragment() {
             findNavController().navigate(R.id.action_timerEntryFragment_to_friendsListFragment)
         }
 
-        binding?.btnMoveTimer?.setOnClickListener {
-            findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment)
-        }
-
         binding?.btnMoveTodo?.setOnClickListener {
             findNavController().navigate(R.id.action_timerEntryFragment_to_addToListFragment)
         }
+
+         */
 
         //chart 관련 함수 호출
         chart = binding?.chartWeek
