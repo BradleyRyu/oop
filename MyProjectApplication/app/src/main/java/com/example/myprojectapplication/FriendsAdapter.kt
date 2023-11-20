@@ -56,6 +56,7 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
 
     override fun getItemCount(): Int = friendsList.size
 
+
     class Holder(private val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(friendData: FriendData) {
 

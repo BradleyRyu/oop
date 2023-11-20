@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentFriendsListBinding
 import com.example.myprojectapplication.viewmodel.TodoViewModel
 
+
 class FriendsListFragment : Fragment() {
     // 온라인인 친구를 누르면 진행중인 타이머의 상태를 확인하고 같이하기 보낼 수 있도록 수정 필요
     // 서버를 이용해서 친구들의 상태를 확인할 수 있어야 한다. -> 서버에 데이터를 어떻게 저장해야할까?

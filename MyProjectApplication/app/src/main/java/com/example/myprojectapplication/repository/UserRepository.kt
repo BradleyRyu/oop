@@ -17,6 +17,7 @@ class UserRepository {
     fun updateUser(id: String, newUser: UserDataClass) {
         userRef.child(id).setValue(newUser)
     }
+
     // 사용자 정보 가져오기
     fun observeUser(id: String, userLiveData: MutableLiveData<UserDataClass>) {
         userRef.child(id).addValueEventListener(object : ValueEventListener {
