@@ -45,81 +45,43 @@ class FriendslistPopupFragment: Fragment() {
     }
 }
 
-data class FreindsData(val id: String, val state: String)
-
-class FriendsAdapter(val friends: List<FriendsData>?): RecyclerView.Adapter<FriendsAdapter.Holder>() {
-    //파라미터를 수정해서 파이어베이스 데이터를 읽어올 수 있도록 할 것
-
-    class ViewHolder(val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(friend: FriendsData?) {
-            friend?.let {
-                //binding.txtId.text = it.id.toString()
-                //binding.txtState.text = it.state.toString()
-            }
-        }
-    }
+class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Adapter<FriendsAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = FriendsListUnitBinding.inflate(LayoutInflater.from(parent.context))
         return Holder(binding)
     }
 
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        TODO("Not yet implemented")
-    }
+    override fun onBindViewHolder(holder: Holder, position: Int) = holder.bind(friendsList[position])
 
-    override fun getItemCount() = friends?.size?: 0
+    override fun getItemCount(): Int = friendsList.size
 
     class Holder(private val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(friend: FriendsData) {
-            /*
-            class holderViewModel: ViewModel() {
-                private val repository = FriendRepository()
-                private val _id = MutableLiveData<String>()
-                val id: LiveData<String> get() = _id
+        fun bind(friendData: FriendData) {
 
+            binding.txtId.text = friendData.id
+            binding.txtState.text = friendData.state
 
-                private val _state = MutableLiveData<String>()
-                val state: LiveData<String> get() = _state
-
-                init {
-                    repository.observeFriends(_id)
-                }
-
+            when (friendData.state) {
+                "OFFLINE" -> R.drawable.offline
+                "ONLINE" -> R.drawable.online
             }
-
-             */
-
-            //binding.txtId.text = friend.id.toString()
-
-            //binding.txtState.text = friend.state.toString()
-
-//            binding.btnPopupFriends.setImageResource( when ( friend.state.toString() ) {
-//                "OFFLINE" -> R.drawable.offline
-//                "ONLINE" -> R.drawable.online
-//            })
-/*
-            when (friend.state.toString()) { // 온,오프라인 상태에 따른 글자색 변경
-                "OFFLINE" -> binding.txtState.setTextColor(Color.RED)
-                "ONLINE" -> binding.txtState.setTextColor(Color.BLUE)
-            }
-
-
-
             binding.root.setOnClickListener {// 토스트 하기 위한 코드
-                Toast.makeText(binding.root.context, "ID : ${friend.id} State : ${friend.state}",
+                Toast.makeText(binding.root.context, "ID : ${friendData.id} State : ${friendData.state}",
                     Toast.LENGTH_SHORT).show()
             }
-
- */
 
             binding.btnPopupFriends.setOnClickListener {
                 val popupView = LayoutInflater.from(it.context).inflate(R.layout.friendslist_popup, null)
                 val mBuilder = AlertDialog.Builder(it.context)
                     .setView(popupView)
-
                 mBuilder.show()
             }
+
+            binding.btnPopupFriends.setImageResource(when(friendData.state) {
+                "OFFLINE" -> R.drawable.offline
+                else -> R.drawable.online
+            })
 
         }
     }

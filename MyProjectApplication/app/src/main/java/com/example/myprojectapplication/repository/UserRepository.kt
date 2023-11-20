@@ -1,7 +1,7 @@
 package com.example.myprojectapplication.repository
 
 import androidx.lifecycle.MutableLiveData
-import com.example.myprojectapplication.FriendsData
+import com.example.myprojectapplication.FriendData
 import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.viewmodel.UserDataClass
 import com.google.firebase.database.DataSnapshot
@@ -30,6 +30,34 @@ class UserRepository {
             }
         })
     }
+
+    fun observeFriendsList(id: String, friendsLiveData: MutableLiveData<List<FriendData>>) {
+        userRef.child(id).child("friendsList").addValueEventListener( object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val friendsList = snapshot.getValue<List<FriendData>>()
+                friendsLiveData.postValue(friendsList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    fun addNewFriends(id: String, newFriends: FriendData) {
+        userRef.child(id).child("friendsList").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val currentFriendsList = snapshot.getValue<List<FriendData>>() ?: emptyList()
+                val newFriendsList = currentFriendsList.toMutableList() + newFriends
+                userRef.child(id).child("friendsList").setValue(newFriendsList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // exception
+            }
+        })
+    }
+
     fun addTodoItem(id: String, newItem: TodoList) {
         userRef.child(id).child("todo").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

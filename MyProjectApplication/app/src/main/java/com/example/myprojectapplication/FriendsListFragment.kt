@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentFriendsListBinding
@@ -16,19 +18,19 @@ class FriendsListFragment : Fragment() {
     // 서버를 이용해서 친구들의 상태를 확인할 수 있어야 한다. -> 서버에 데이터를 어떻게 저장해야할까?
 
     var binding: FragmentFriendsListBinding? = null
-
-    val viewModel: TodoViewModel by viewModels()
+    val viewModel: TodoViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFriendsListBinding.inflate(inflater)
+        binding = FragmentFriendsListBinding.inflate(inflater, container, false)
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding?.btnCalender?.setOnClickListener {
             findNavController().navigate(R.id.action_friendsListFragment_to_calenderFragment)
         }
@@ -40,7 +42,13 @@ class FriendsListFragment : Fragment() {
         }
 
         binding?.recFriends?.layoutManager = LinearLayoutManager(context)
-        binding?.recFriends?.adapter = FriendsAdapter(viewModel.userLiveData.value?.friendsList)
+        val friendsAdapter = FriendsAdapter(mutableListOf())
+        binding?.recFriends?.adapter = friendsAdapter
+
+        viewModel.observeFriendsList("asdf").observe(viewLifecycleOwner, Observer {friendsList ->
+            friendsAdapter.friendsList = friendsList.toMutableList()
+            friendsAdapter.notifyDataSetChanged()
+        })
     }
 
 }
