@@ -10,7 +10,7 @@ import com.example.myprojectapplication.repository.UserRepository
 
 data class UserDataClass(
     val id: String = "",
-    val todo: List<TodoList> = emptyList(),
+    var todo: MutableList<TodoList> = mutableListOf(),
     var time: Int = 0,
     var state: Boolean = false,
     val friendsList: List<FriendsList> = emptyList()
