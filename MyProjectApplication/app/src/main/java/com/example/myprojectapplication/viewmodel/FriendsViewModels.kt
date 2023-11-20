@@ -7,7 +7,13 @@ import com.example.myprojectapplication.FriendsData
 import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.repository.UserRepository
 
-data class UserDataClass(val id: String, val todo: List<TodoList>, var time: Int = 0 , var state: Boolean = false, val friendsList: List<FriendsData>)
+data class UserDataClass(
+    val id: String = "",
+    val todo: List<TodoList> = emptyList(),
+    var time: Int = 0,
+    var state: Boolean = false,
+    val friendsList: List<FriendsData> = emptyList()
+)
 
 class TodoViewModel : ViewModel() {
     private val todoRepository = UserRepository()
@@ -25,6 +31,10 @@ class TodoViewModel : ViewModel() {
         todoRepository.addTodoItem(id, newItem)
         todoRepository.post(id, newItem)
     }
+
+//    fun updateUser(id: String, newUser: UserDataClass) {
+//        userRef.child(id).setValue(newUser)
+//    }
 
     // 할일 항목 제거
     fun removeTodoItem(id: String, index: Int) {

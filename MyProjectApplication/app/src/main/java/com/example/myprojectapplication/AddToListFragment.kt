@@ -1,3 +1,4 @@
+/*
 package com.example.myprojectapplication
 
 import android.os.Bundle
@@ -36,7 +37,7 @@ class AddToListFragment : Fragment() {
         }
         binding?.btnCancel?.setOnClickListener {
             Toast.makeText(binding.root.context, "취소되었습니다.", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_addToListFragment_to_todoFragment)
+//            findNavController().navigate(R.id.action_addToListFragment_to_todoFragment)
         }
     }
     //class의 이름으로 액세스 가능
@@ -54,3 +55,5 @@ class AddToListFragment : Fragment() {
      */
 
 }
+
+ */

@@ -60,9 +60,6 @@ class CalendarFragment : Fragment() {
             findNavController().navigate(R.id.action_calenderFragment_to_todoFragment)
         }
         //유저 ID로 이동
-        binding?.btnUserId?.setOnClickListener {
-            findNavController().navigate(R.id.action_calenderFragment_to_userFragment)
-        }
         //친구 List로 이동
         binding?.btnFriendslist?.setOnClickListener {
             findNavController().navigate(R.id.action_calenderFragment_to_friendsListFragment)
