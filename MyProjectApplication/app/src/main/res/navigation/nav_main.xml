@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_minho"
-    app:startDestination="@id/calenderFragment">
+    app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/calenderFragment"
         android:name="com.example.myprojectapplication.CalendarFragment"
@@ -75,5 +75,14 @@
         <action
             android:id="@+id/action_timerEntryFragment_to_friendsListFragment"
             app:destination="@id/friendsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.myprojectapplication.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_calenderFragment"
+            app:destination="@id/calenderFragment" />
     </fragment>
 </navigation>

@@ -95,6 +95,23 @@ class TodoFragment : Fragment() {
 
         return binding?.root
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // ViewModel에서 사용자의 투두리스트 데이터를 관찰합니다.
+        viewModel.observeUser(id).observe(viewLifecycleOwner) { userData ->
+            // userData가 null이 아니면 투두리스트를 띄우기
+            userData?.let {
+                // 투두리스트를 UI에 띄우는 코드
+                // 예: todoListAdapter.submitList(it.todo)
+                todoList = it.todo.toMutableList()
+                binding?.recTodo?.adapter = TodoAdapter(todoList)
+            }
+        }
+
+        // 기존 코드 생략...
+    }
+
 
     /* 추후 구현 고려
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

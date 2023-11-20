@@ -1,6 +1,7 @@
 package com.example.myprojectapplication.repository
 
 import androidx.lifecycle.MutableLiveData
+import com.example.myprojectapplication.FriendsData
 import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.viewmodel.UserDataClass
 import com.google.firebase.database.DataSnapshot
@@ -65,7 +66,7 @@ class UserRepository {
         })
     }
 
-    fun post(id: String, newItem: TodoList) {
-        userRef.child(id).setValue(newItem)
-    }
+//    fun addFriens(id: String, newFriend: FriendsData) {
+//        userRef.child(id).child
+//    }
 }
