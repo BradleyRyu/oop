@@ -45,14 +45,16 @@ class FriendslistPopupFragment: Fragment() {
     }
 }
 
-class FriendsAdapter(val friends: List<Friends>?): RecyclerView.Adapter<FriendsAdapter.Holder>() {
+data class FreindsData(val id: String, val state: String)
+
+class FriendsAdapter(val friends: List<FriendsData>?): RecyclerView.Adapter<FriendsAdapter.Holder>() {
     //파라미터를 수정해서 파이어베이스 데이터를 읽어올 수 있도록 할 것
 
     class ViewHolder(val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(friend: Friends?) {
+        fun bind(friend: FriendsData?) {
             friend?.let {
-                binding.txtId.text = it.id.toString()
-                binding.txtState.text = it.state.toString()
+                //binding.txtId.text = it.id.toString()
+                //binding.txtState.text = it.state.toString()
             }
         }
     }
@@ -69,7 +71,8 @@ class FriendsAdapter(val friends: List<Friends>?): RecyclerView.Adapter<FriendsA
     override fun getItemCount() = friends?.size?: 0
 
     class Holder(private val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(friend: Friends) {
+        fun bind(friend: FriendsData) {
+            /*
             class holderViewModel: ViewModel() {
                 private val repository = FriendRepository()
                 private val _id = MutableLiveData<String>()
@@ -85,24 +88,30 @@ class FriendsAdapter(val friends: List<Friends>?): RecyclerView.Adapter<FriendsA
 
             }
 
-            binding.txtId.text = friend.id.toString()
+             */
 
-            binding.txtState.text = friend.state.toString()
+            //binding.txtId.text = friend.id.toString()
+
+            //binding.txtState.text = friend.state.toString()
 
 //            binding.btnPopupFriends.setImageResource( when ( friend.state.toString() ) {
 //                "OFFLINE" -> R.drawable.offline
 //                "ONLINE" -> R.drawable.online
 //            })
-
+/*
             when (friend.state.toString()) { // 온,오프라인 상태에 따른 글자색 변경
                 "OFFLINE" -> binding.txtState.setTextColor(Color.RED)
                 "ONLINE" -> binding.txtState.setTextColor(Color.BLUE)
             }
 
+
+
             binding.root.setOnClickListener {// 토스트 하기 위한 코드
                 Toast.makeText(binding.root.context, "ID : ${friend.id} State : ${friend.state}",
                     Toast.LENGTH_SHORT).show()
             }
+
+ */
 
             binding.btnPopupFriends.setOnClickListener {
                 val popupView = LayoutInflater.from(it.context).inflate(R.layout.friendslist_popup, null)

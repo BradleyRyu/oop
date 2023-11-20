@@ -3,10 +3,11 @@ package com.example.myprojectapplication.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.myprojectapplication.Friends
+import com.example.myprojectapplication.FriendsData
 import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.repository.UserRepository
-data class UserDataClass(val id: String, val todo: List<TodoList>, var time: Int = 0 , var state: Boolean = false, val friendsList: List<Friends>)
+
+data class UserDataClass(val id: String, val todo: List<TodoList>, var time: Int = 0 , var state: Boolean = false, val friendsList: List<FriendsData>)
 
 class TodoViewModel : ViewModel() {
     private val todoRepository = UserRepository()
@@ -22,6 +23,7 @@ class TodoViewModel : ViewModel() {
     // 할일 항목 추가
     fun addTodoItem(id: String, newItem: TodoList) {
         todoRepository.addTodoItem(id, newItem)
+        todoRepository.post(id, newItem)
     }
 
     // 할일 항목 제거

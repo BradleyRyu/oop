@@ -46,7 +46,7 @@ class UserRepository {
                 // 에러 처리
             }
         })
-        userRef.setValue(id, newItem)
+        //userRef.setValue(id, newItem)
     }
 
     // 할일 항목 제거
@@ -66,5 +66,9 @@ class UserRepository {
                 // 에러 처리
             }
         })
+    }
+
+    fun post(id: String, newItem: TodoList) {
+        userRef.setValue(id, newItem)
     }
 }
