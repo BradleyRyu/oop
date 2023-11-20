@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.databinding.FriendsListUnitBinding
 import com.example.myprojectapplication.databinding.FriendslistPopupBinding
-import com.example.myprojectapplication.repository.FriendRepository
 import com.example.myprojectapplication.viewmodel.TodoViewModel
 
 class FriendslistPopupFragment: Fragment() {

@@ -2,10 +2,6 @@ package com.example.myprojectapplication
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.myprojectapplication.repository.FriendRepository
-import com.example.myprojectapplication.repository.UserRepository
-import com.example.myprojectapplication.viewmodel.TodoViewModel
 
 
 const val DEFAULTSTATE = "OFFLINE"
