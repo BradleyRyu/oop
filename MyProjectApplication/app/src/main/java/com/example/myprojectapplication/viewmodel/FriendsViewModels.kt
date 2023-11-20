@@ -29,12 +29,7 @@ class TodoViewModel : ViewModel() {
     // 할일 항목 추가
     fun addTodoItem(id: String, newItem: TodoList) {
         todoRepository.addTodoItem(id, newItem)
-        todoRepository.post(id, newItem)
     }
-
-//    fun updateUser(id: String, newUser: UserDataClass) {
-//        userRef.child(id).setValue(newUser)
-//    }
 
     // 할일 항목 제거
     fun removeTodoItem(id: String, index: Int) {

@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 
 class UserRepository {
     private val database = FirebaseDatabase.getInstance()
@@ -28,15 +29,13 @@ class UserRepository {
             }
         })
     }
-
     fun addTodoItem(id: String, newItem: TodoList) {
-        userRef.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+        userRef.child(id).child("todo").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val currentUser = snapshot.getValue(UserDataClass::class.java) ?: return
-                val updatedTodoList = currentUser.todo.toMutableList()
+                val currentTodoList = snapshot.getValue<List<TodoList>>() ?: emptyList()
+                val updatedTodoList = currentTodoList.toMutableList()
                 updatedTodoList.add(newItem)
-                val updatedUser = currentUser.copy(todo = updatedTodoList)
-                updateUser(id, updatedUser)
+                userRef.child(id).child("todo").setValue(updatedTodoList)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -44,29 +43,8 @@ class UserRepository {
             }
         })
     }
+
     // 사용자 정보 업데이트
-
-    // 할일 항목 추가
-
-    /*
-    fun addTodoItem(id: String, newItem: TodoList) {
-        userRef.child(id).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val currentUser = snapshot.getValue(UserDataClass::class.java) ?: return
-                val updatedTodoList = currentUser.todo.toMutableList()
-                updatedTodoList.add(newItem)
-                val updatedUser = currentUser.copy(todo = updatedTodoList)
-                updateUser(id, updatedUser)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // 에러 처리
-            }
-        })
-        //userRef.setValue(id, newItem)
-    }
-
-     */
 
     // 할일 항목 제거
     fun removeTodoItem(id: String, index: Int) {
