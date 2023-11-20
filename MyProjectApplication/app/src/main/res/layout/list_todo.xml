@@ -63,19 +63,19 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_todo" />
 
     <TextView
-        android:id="@+id/txt_how_long"
+        android:id="@+id/txt_howmany_cycle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="3dp"
-        android:text="공부한 시간: "
+        android:text="타이머 사이클"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/img_list"
         app:layout_constraintTop_toBottomOf="@+id/txt_when" />
 
     <TextView
-        android:id="@+id/txt_howmuch"
+        android:id="@+id/txt_done_cycle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
@@ -83,7 +83,7 @@
         android:layout_marginBottom="3dp"
         android:text="null"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/txt_how_long"
+        app:layout_constraintStart_toEndOf="@+id/txt_howmany_cycle"
         app:layout_constraintTop_toBottomOf="@+id/txt_date" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentCalendarBinding
+import com.example.myprojectapplication.viewmodel.TodoViewModel
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Calendar
@@ -17,6 +20,7 @@ import java.util.Calendar
 class CalendarFragment : Fragment() {
 
     var binding: FragmentCalendarBinding? = null
+    val viewModel: TodoViewModel by activityViewModels()
 
     // fragment가 생성될 당시 실행될 코드 ( 화면 구성 )
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -36,8 +36,8 @@ class TodoViewModel : ViewModel() {
     }
 
     // 할일 항목 추가
-    fun addTodoItem(id: String, newItem: TodoList) {
-        todoRepository.addTodoItem(id, newItem)
+    fun updateTodoItem(id: String, newItem: MutableList<TodoList>) {
+        todoRepository.updateTodoItem(id, newItem)
     }
 
     // 할일 항목 제거
