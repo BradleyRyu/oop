@@ -10,9 +10,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.myprojectapplication.databinding.FragmentCalendarBinding
 import com.example.myprojectapplication.databinding.FragmentTimerBinding
+import com.example.myprojectapplication.viewmodel.TodoViewModel
 import com.github.mikephil.charting.components.XAxis
 
 /*
@@ -56,6 +58,8 @@ class TimerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // updateTime test
+        updateTime()
 
         //영역함수 apply 사용
         binding?.apply {
@@ -93,6 +97,13 @@ class TimerFragment : Fragment() {
         beepSound = soundPool.load(requireContext(), R.raw.alarmsound, 1)
     }
 
+    private val viewModel: TodoViewModel by activityViewModels()
+
+    fun updateTime() {
+        var id = "asdf"
+        val newTime = 1000 // 임시값
+        viewModel.updateTime(id, newTime)
+    }
     //학습사이클 시작 함수 +state 변수 추가하여 상단에 상태 표시
     private fun startStudyCycle(cycles: Int) {
         currentCountTimer = createCountDown(STUDY_TIME, cycles, true)

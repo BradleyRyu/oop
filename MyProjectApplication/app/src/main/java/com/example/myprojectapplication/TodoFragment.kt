@@ -147,7 +147,7 @@ class TodoFragment : Fragment() {
         donetodo: Boolean
     ): Boolean {
         return if( isValidDate(whentodo_year, whentodo_month, whentodo_day) ) {
-            todoList.add(TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
+            todoList.add(TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, 0, false))
             // 어댑터에게 아이템이 삽입되었다는 것을 알려줌 (notifyDataSetChanged를 사용하려 했으나 안드로이드 공식 문서에서 특정 작업에 대한 notify를 쓸 것을 권장하였음.
             todoList = sortTodoList(todoList)  // 초기 어댑터를 만들기 전에 목록을 정렬합니다.
             // 입력된 리스트를 포함하여 다시 todo리스트 정렬하고
@@ -155,7 +155,7 @@ class TodoFragment : Fragment() {
 //            viewModel.addTodoItem("users", TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
             // 정렬된 리스트로 어댑터 갱신
             binding?.recTodo?.adapter = TodoAdapter(todoList)
-            viewModel.addTodoItem(id, TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, donetodo))
+            viewModel.addTodoItem(id, TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, 0, false))
             true
         } else {
             false

@@ -66,7 +66,7 @@ class UserRepository {
         })
     }
 
-//    fun addFriens(id: String, newFriend: FriendsData) {
-//        userRef.child(id).child
-//    }
+    fun updateTime(id: String, newTime: Int) {
+        userRef.child(id).child("time").setValue(newTime)
+    }
 }

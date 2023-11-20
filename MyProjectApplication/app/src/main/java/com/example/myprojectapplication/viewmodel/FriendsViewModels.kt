@@ -35,4 +35,8 @@ class TodoViewModel : ViewModel() {
     fun removeTodoItem(id: String, index: Int) {
         todoRepository.removeTodoItem(id, index)
     }
+
+    fun updateTime(id: String, newTime: Int) {
+        todoRepository.updateTime(id, newTime)
+    }
 }
