@@ -73,8 +73,16 @@ class UserRepository {
             }
         })
     }
-
-    // 사용자 정보 업데이트
+    fun updateTodoItem(id: String, updatedTodoList: MutableList<TodoList>) {
+        userRef.child(id).child("todo").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                userRef.child(id).child("todo").setValue(updatedTodoList)
+            }
+            override fun onCancelled(error: DatabaseError) {
+                // 에러 처리
+            }
+        })
+    }
 
     // 할일 항목 제거
     fun removeTodoItem(id: String, index: Int) {
