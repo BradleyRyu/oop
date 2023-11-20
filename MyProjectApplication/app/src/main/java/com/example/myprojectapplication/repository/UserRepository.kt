@@ -30,15 +30,11 @@ class UserRepository {
             }
         })
     }
-    fun addTodoItem(id: String, newItem: TodoList) {
+    fun updateTodoItem(id: String, updatedTodoList: MutableList<TodoList>) {
         userRef.child(id).child("todo").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val currentTodoList = snapshot.getValue<List<TodoList>>() ?: emptyList()
-                val updatedTodoList = currentTodoList.toMutableList()
-                updatedTodoList.add(newItem)
                 userRef.child(id).child("todo").setValue(updatedTodoList)
             }
-
             override fun onCancelled(error: DatabaseError) {
                 // 에러 처리
             }

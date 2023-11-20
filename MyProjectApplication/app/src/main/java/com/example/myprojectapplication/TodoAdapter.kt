@@ -30,13 +30,13 @@ class TodoAdapter(val todoList: MutableList<TodoList>): RecyclerView.Adapter<Tod
         fun bind(todolist: TodoList) {
             binding.txtTodo.text = todolist.thing_Todo
             binding.txtDate.text = "${todolist.year_Todo.toString()}년 ${todolist.month_Todo.toString()}월 ${todolist.day_Todo.toString()}일"
+            binding.txtDoneCycle.text = todolist.time_Todo.toString()
         }
 
     }
     fun removeList(position: Int) {
         todoList.removeAt(position)
         notifyItemRemoved(position)
-        Log.d("TodoFragment", "Item removed. New item count: ${todoList.size}")
     }
 }
 
