@@ -13,6 +13,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
+
+
         val navController = binding.frmFrag.getFragment<NavHostFragment>().navController
         // 제 컴퓨터에서는 액션 바가 설정이 안 되네요 ㅠㅠ.. 혹시 되는 분 부탁드립니다..!
         // setupActionBarWithNavController(navController)

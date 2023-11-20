@@ -25,11 +25,24 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        userId = binding?.txtLoginid?.text?.let {
+        userId = binding?.inputId?.text?.let {
 
         }.toString()
 
         binding?.btnLogin?.setOnClickListener {
+            val inputId = binding?.inputId?.text.let {
+                binding?.inputId?.text
+            }.toString()
+
+            val bundle = Bundle()
+            id.let {
+                bundle.putString("id", inputId)
+            }
+
+            val todoFragment = TodoFragment()
+            val timerEntry = TimerEntryFragment()
+//            val friendsList = Fr
+
             findNavController().navigate(R.id.action_loginFragment_to_calenderFragment)
             // 번들로 전달하기
         }

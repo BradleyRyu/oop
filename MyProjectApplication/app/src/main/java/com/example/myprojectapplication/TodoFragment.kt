@@ -25,7 +25,7 @@ class TodoFragment : Fragment() {
 
     private var todoList: MutableList<TodoList> = mutableListOf()
     val viewModel: TodoViewModel by activityViewModels()
-    val id = "asdf"
+    var id: String = ""
 
     // ItemTouchHelper를 선언 ( recycler view에 삭제를 위한 swipe를 지원하는 유틸리티 클래스. swipe가 일어나기 전까지는 불릴 일이 없으므로, by lazy로 선언함.)
     private val itemTouchHelper by lazy {
@@ -97,6 +97,8 @@ class TodoFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        id = arguments?.getString("id").toString()
 
         // ViewModel에서 사용자의 투두리스트 데이터를 관찰합니다.
         viewModel.observeUser(id).observe(viewLifecycleOwner) { userData ->
