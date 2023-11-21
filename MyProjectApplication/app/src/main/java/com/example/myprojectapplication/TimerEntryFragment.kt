@@ -61,26 +61,29 @@ class TimerEntryFragment : Fragment() {
             findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment)
         }
 
-        /* 버튼 삭제함. 추가적인 버튼 필요하면 이미지 버튼으로 새로 만들기
-        binding?.btnMoveCalender?.setOnClickListener {
-            findNavController().navigate(R.id.action_timerEntryFragment_to_calenderFragment)
-        }
-
-        binding?.btnMoveFriends?.setOnClickListener {
-            findNavController().navigate(R.id.action_timerEntryFragment_to_friendsListFragment)
-        }
-
-        binding?.btnMoveTodo?.setOnClickListener {
-            findNavController().navigate(R.id.action_timerEntryFragment_to_addToListFragment)
-        }
-
-         */
+        //버튼 삭제함. 추가적인 버튼 필요하면 이미지 버튼으로 새로 만들기
 
         //chart 관련 함수 호출
         chart = binding?.chartWeek
         setChart()
         addChart()
         setData()
+
+
+        //리사이클러 뷰 코드
+
+        // ViewModel에서 사용자의 투두리스트 데이터를 관찰
+        viewModel.observeUser(id).observe(viewLifecycleOwner) { userData ->
+            // userData가 null이 아니면 투두리스트를 띄우기
+            userData?.let {
+                // 투두리스트를 UI에 띄우는 코드
+                todoList = it.todo.toMutableList()
+                todayList = getTodayTodoList(todoList)
+                binding?.recShowToDo?.adapter = TodayAdapter(todayList)
+            }
+        }
+
+
     }
 
     // 아래로 Chart 설정
