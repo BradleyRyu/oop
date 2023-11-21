@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.myprojectapplication.databinding.FragmentSetUserBinding
@@ -25,20 +26,19 @@ class SetUserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding?.btnBackfriendslist?.setOnClickListener {
-            findNavController().navigate(R.id.action_setUserFragment_to_friendsListFragment2)
-        }
-        binding?.txtNewfriends?.text.toString().let {
-            binding?.btnFindFriendsId?.setOnClickListener {
-                viewModel.addNewFriends("asdf", binding?.txtNewfriends?.text.toString(), "OFFLINE")
-            }
-        }
 
+//        binding?.btnBackfriendslist?.setOnClickListener {
+//            findNavController().navigate(R.id.action_setUserFragment_to_friendsListFragment2)
+//        }
+
+        // 사용자의 상태에 따른 이미지 변경
+        // binding?.userImage?.setImageResource()
 
         binding?.btnFindFriendsId?.setOnClickListener {
-            val newFriendsId = binding?.txtNewfriends?.text.toString()
-            viewModel.addNewFriends("asdf", newFriendsId, "OFFLINE")
+            binding?.txtNewfriends?.text?.toString().let {
+                viewModel.addNewFriends("asdf", binding?.txtNewfriends?.text.toString(), "ONLINE")
+                Toast.makeText(binding?.root?.context, "Append Friend!!", Toast.LENGTH_SHORT).show()
+            }
         }
-
     }
 }

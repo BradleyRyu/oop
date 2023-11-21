@@ -55,7 +55,7 @@
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="User ID"
                 android:textAlignment="center"
@@ -74,14 +74,39 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btn_user_id_change"
-                android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/black"
-                android:text="Change" />
+                android:text="My Friends"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/txt_cntfriends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0"
+                android:textAlignment="center"
+                android:textColor="#5800F4"
+                android:textSize="20sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <Space
@@ -92,6 +117,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="30" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -105,8 +135,8 @@
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="10" />
+                android:layout_height="match_parent"
+                android:layout_weight="30" />
 
             <EditText
                 android:id="@+id/txt_newfriends"
@@ -114,21 +144,19 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="text"
-                android:text="Name" />
+                android:inputType="text" />
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="10" />
+                android:layout_height="match_parent"
+                android:layout_weight="30" />
 
             <Button
                 android:id="@+id/btn_find_friends_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:background="#FFFFFF"
-                android:text="Search" />
+                android:text="Append" />
 
         </LinearLayout>
 

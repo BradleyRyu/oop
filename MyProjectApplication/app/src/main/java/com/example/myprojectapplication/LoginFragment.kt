@@ -37,11 +37,14 @@ class LoginFragment : Fragment() {
             val bundle = Bundle()
             id.let {
                 bundle.putString("id", inputId)
+                val friendsList = FriendsListFragment()
+                friendsList.arguments = bundle
             }
 
             val todoFragment = TodoFragment()
             val timerEntry = TimerEntryFragment()
-//            val friendsList = Fr
+//            val friendsList = FriendsListFragment()
+//            friendsList.arguments = bundle
 
             findNavController().navigate(R.id.action_loginFragment_to_calenderFragment)
             // 번들로 전달하기

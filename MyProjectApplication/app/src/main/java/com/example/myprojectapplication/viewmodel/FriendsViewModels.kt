@@ -53,4 +53,8 @@ class TodoViewModel : ViewModel() {
         val newFriend = FriendData(newFriends, state)
         todoRepository.addNewFriends(id, newFriend)
     }
+
+    fun deleteFriend(id: String, deleteId: String) {
+        todoRepository.deleteFriend(id, deleteId)
+    }
 }

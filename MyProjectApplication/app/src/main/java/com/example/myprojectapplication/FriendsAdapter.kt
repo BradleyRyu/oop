@@ -1,12 +1,16 @@
 package com.example.myprojectapplication
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
@@ -17,31 +21,47 @@ import com.example.myprojectapplication.databinding.FriendsListUnitBinding
 import com.example.myprojectapplication.databinding.FriendslistPopupBinding
 import com.example.myprojectapplication.viewmodel.TodoViewModel
 
-class FriendslistPopupFragment: Fragment() {
+class FriendslistPopupFragment: DialogFragment() {
     var binding: FriendslistPopupBinding? = null
     val viewModel: TodoViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FriendslistPopupBinding.inflate(inflater)
-        return binding?.root
+    override fun onStart() {
+        super.onStart()
+
+        val dialog = dialog
+        if (dialog != null) {
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+            dialog.window?.setLayout(width, height)
+            dialog.window?.setGravity(Gravity.CENTER)
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(requireActivity())
+        val inflater = requireActivity().layoutInflater
+        binding = FriendslistPopupBinding.inflate(inflater)
+
+        val bundle = this.arguments  // arguments를 통해 번들을 가져옴
+        val friendId = bundle?.getString("id")
+
+        binding?.popupTitle?.text = friendId
 
         binding?.btnDelete?.setOnClickListener {
-            println("Helllo")
-            Toast.makeText(binding?.root?.context, "Delete!!!",
-                Toast.LENGTH_SHORT).show()
+            Toast.makeText(binding?.root?.context, "$friendId  Delete Friend...", Toast.LENGTH_SHORT).show()
+            friendId?.let {
+                viewModel.deleteFriend(it, friendId)
+            }
+            dismiss()
         }
 
         binding?.btnWithfriend?.setOnClickListener {
-            Toast.makeText(binding?.root?.context, "With Friend!!!",
+            Toast.makeText(binding?.root?.context, "$friendId  With Friend!!!",
                 Toast.LENGTH_SHORT).show()
         }
+
+        builder.setView(binding?.root)
+        return builder.create()
     }
 }
 
@@ -63,20 +83,9 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
             binding.txtId.text = friendData.id
             binding.txtState.text = friendData.state
 
-            when (friendData.state) {
-                "OFFLINE" -> R.drawable.offline
-                "ONLINE" -> R.drawable.online
-            }
             binding.root.setOnClickListener {// 토스트 하기 위한 코드
                 Toast.makeText(binding.root.context, "ID : ${friendData.id} State : ${friendData.state}",
                     Toast.LENGTH_SHORT).show()
-            }
-
-            binding.btnPopupFriends.setOnClickListener {
-                val popupView = LayoutInflater.from(it.context).inflate(R.layout.friendslist_popup, null)
-                val mBuilder = AlertDialog.Builder(it.context)
-                    .setView(popupView)
-                mBuilder.show()
             }
 
             binding.btnPopupFriends.setImageResource(when(friendData.state) {
@@ -84,6 +93,14 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
                 else -> R.drawable.online
             })
 
+            binding.btnPopupFriends.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putString("id", friendData.id)
+                bundle.putString("state", friendData.state)
+                val friendPopupWindow = FriendslistPopupFragment()
+                friendPopupWindow.arguments = bundle
+                friendPopupWindow.show((it.context as AppCompatActivity).supportFragmentManager, "FriendslistPopupFragment")
+            }
         }
     }
 }

@@ -106,4 +106,31 @@ class UserRepository {
     fun updateTime(id: String, newTime: Int) {
         userRef.child(id).child("time").setValue(newTime)
     }
+
+
+    fun deleteFriend(id: String, deleteId: String) {
+        userRef.child(id).child("friendsList").addValueEventListener( object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val currentFriendsList = snapshot.getValue<List<FriendData>>() ?: emptyList()
+                val newFriendsList = currentFriendsList.filter { it.id != deleteId }.toMutableList()
+                userRef.child(id).child("friendsList").setValue(newFriendsList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // exception
+            }
+        })
+    }
+
+    fun withFriend(id: String, withId: String) {
+        userRef.child(id).child("friendsList").addValueEventListener( object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // exception
+            }
+        })
+    }
 }
