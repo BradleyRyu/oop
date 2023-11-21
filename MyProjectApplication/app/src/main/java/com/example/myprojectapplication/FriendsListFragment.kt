@@ -61,9 +61,5 @@ class FriendsListFragment : Fragment() {
                 })
             }
         }
-        viewModel.observeFriendsList(bundle?.getString("id")!!).observe(viewLifecycleOwner, Observer {friendsList ->
-            friendsAdapter.friendsList = friendsList.toMutableList()
-            friendsAdapter.notifyDataSetChanged()
-        })
     }
 }
