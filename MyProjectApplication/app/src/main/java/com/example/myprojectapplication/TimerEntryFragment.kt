@@ -83,6 +83,17 @@ class TimerEntryFragment : Fragment() {
             }
         }
 
+        binding?.btnMoveTimer?.setOnClickListener {
+            // 체크된 항목들만 선택
+            val checkedTodoList = todayList.filter { it.isChecked }
+
+            // thing_Todo만 Bundle에 넣어 전달
+            val bundle = Bundle().apply {
+                putStringArrayList("thingList", ArrayList(checkedTodoList.map { it.thing_Todo }))
+            }
+            findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment, bundle)
+        }
+
 
     }
 

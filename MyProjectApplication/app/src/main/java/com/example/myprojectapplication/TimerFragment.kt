@@ -95,6 +95,11 @@ class TimerFragment : Fragment() {
 
         //사운드풀 설정
         beepSound = soundPool.load(requireContext(), R.raw.alarmsound, 1)
+
+        val thingList: List<String> = arguments?.getStringArrayList("thingList") ?: emptyList()
+        binding?.txtWhatToDO?.text = thingList.joinToString(", ") //일단 체크가 2개 될 수도 있기 때문에 이렇게 해둠
+        //체크 1개로 할 건지 고민해보기
+
     }
 
     private val viewModel: TodoViewModel by activityViewModels()

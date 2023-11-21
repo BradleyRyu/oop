@@ -14,6 +14,11 @@ class TodayAdapter(val todayList: MutableList<TodoList>) : RecyclerView.Adapter<
         fun bind(today: TodoList) {
             binding.txtToday.text = today.thing_Todo
             //binding.txtTime.text = today. >> 이 부분은 아직
+            binding.chkStudy.isChecked = today.isChecked
+
+            binding.chkStudy.setOnCheckedChangeListener { _, isChecked ->
+                today.isChecked = isChecked
+            }
         }
 
     }

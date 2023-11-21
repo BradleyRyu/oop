@@ -22,6 +22,16 @@
             app:srcCompat="@drawable/tomato" />
 
         <TextView
+            android:id="@+id/txt_WhatToDO"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <TextView
             android:id="@+id/txt_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +44,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="245dp"
+            android:layout_marginTop="30dp"
             android:orientation="horizontal"
             android:scrollbarThumbHorizontal="@color/white"
             android:scrollbarThumbVertical="@color/white">
@@ -80,7 +91,7 @@
         android:layout_width="359dp"
         android:layout_height="15dp"
 
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="450dp"
         android:max="4"
         android:progressDrawable="@color/white"
         android:scrollbarThumbHorizontal="@android:drawable/btn_default"
