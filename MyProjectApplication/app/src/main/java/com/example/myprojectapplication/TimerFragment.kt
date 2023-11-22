@@ -11,25 +11,23 @@ import androidx.fragment.app.Fragment
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.example.myprojectapplication.databinding.FragmentCalendarBinding
 import com.example.myprojectapplication.databinding.FragmentTimerBinding
 import com.example.myprojectapplication.viewmodel.TodoViewModel
-import com.github.mikephil.charting.components.XAxis
 
 /*
 To do
 //토마토 이미지 BG 컬러 #FFCDC0
 
-0. 캘린더에서 작성한 할일 목록 선택하여 해당 목록에 대한 타이머
-    cycle 수를 다시 캘린더로 넘겨 학습양 체크
-    //뷰모델로 받아오기
+UI 더 보기 편하게 변경
 
-1. UI 더 보기 편하게 변경
+타이머 엔트리에서 공부한 시간 띄우기
 
-2. media player 사용 휴식 사이클에 음악 넣기
- */
+투두리스트 수정되면 타이머엔트리에서 목표 학습량 새로 만들기
 
+목표 학습량 달성하면 해당 항목 리사이클러뷰에 띄우지 않도록
+*/
 class TimerFragment : Fragment() {
 
     //학습시간, 휴식 시간 설정
@@ -47,6 +45,10 @@ class TimerFragment : Fragment() {
     //alarmSound
     private val soundPool = SoundPool.Builder().build()
     private var beepSound: Int? = null
+    private var todoItem: TodoList? = null
+
+    //사이클 마다 +1 후 > 파이어베이스에 타임올림
+    private var completedCycles = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,8 +60,11 @@ class TimerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // updateTime test
-        updateTime()
+        //updateTime()
+
+
 
         //영역함수 apply 사용
         binding?.apply {
@@ -96,19 +101,25 @@ class TimerFragment : Fragment() {
         //사운드풀 설정
         beepSound = soundPool.load(requireContext(), R.raw.alarmsound, 1)
 
-        val thingList: List<String> = arguments?.getStringArrayList("thingList") ?: emptyList()
-        binding?.txtWhatToDO?.text = thingList.joinToString(", ") //일단 체크가 2개 될 수도 있기 때문에 이렇게 해둠
-        //체크 1개로 할 건지 고민해보기
+        todoItem = arguments?.getParcelable<TodoList>("todoItem")
+        binding?.txtWhatToDO?.text = todoItem?.thing_Todo
 
     }
 
     private val viewModel: TodoViewModel by activityViewModels()
 
+
+
+//뷰모델의 커렌트 아이디로 설정하고, 일주일 치 배열 만들어서 넣고 그래프에 불러오면 될 듯.
+    /*
     fun updateTime() {
         var id = "asdf" //id 뷰모델의 currentid로 설정
         val newTime = 1000 // 임시값
         viewModel.updateTime(id, newTime)
     }
+     */
+
+
     //학습사이클 시작 함수 +state 변수 추가하여 상단에 상태 표시
     private fun startStudyCycle(cycles: Int) {
         currentCountTimer = createCountDown(STUDY_TIME, cycles, true)
@@ -136,9 +147,15 @@ class TimerFragment : Fragment() {
                 remainSTextView?.text = "%02d".format(remainSeconds % 60)
             }
 
+
             //학습타이머 끝날 경우 휴식타이머, 휴식 타이머 끝나면 사이클 감소
             override fun onFinish() {
                 var remainCycles = cycles
+
+                //파이어베이스에 있으면 그 값, 없으면 0
+                viewModel.getTimeTodo(viewModel.currentUserId ?: "", todoItem?.thing_Todo ?: "").observe(viewLifecycleOwner, Observer { timeTodo ->
+                    completedCycles = timeTodo ?: 0
+                })
 
                 if (time == STUDY_TIME) {
                     //beep 사운드
@@ -150,6 +167,11 @@ class TimerFragment : Fragment() {
                     remainCycles--
                     remainCycle?.text = remainCycles.toString()
 
+                    //학습사이클 완료 > time_Todo 값 업데이트
+                    //투두리스트 작성 시 목표 시간 적게 가능하면 > 목표시간 이후 리사이클러뷰에 나오지 않게, 최대 사이클 목표시간만큼만 가능하게
+                    //viewModel.updateTime("currentTodoID", viewModel.getTodo("currentTodoID").time_Todo + 1)
+                    completedCycles++ // 타이머가 한 사이클 돌 때마다 completedCycles 증가
+
                     //타이머 다 끝나면 다시 TimerEntryFragment로 이동, beep 사운드: 네비게이션 전환될 때에는 실행하지 않음.
                     when(remainCycles){
                         0 -> findNavController().navigate(R.id.action_timerFragment_to_timerEntryFragment)
@@ -157,6 +179,8 @@ class TimerFragment : Fragment() {
                             beepSound?.let{
                                 soundPool.play(it, 1F, 1F, 0, 0, 1F)
                             }
+                            //completedCycles++ // 타이머가 한 사이클 돌 때마다 completedCycles 증가
+                            viewModel.updateTimeTodo(viewModel.currentUserId ?: "입력안됨", todoItem?.thing_Todo ?: "", completedCycles)
                             startStudyCycle(remainCycles)
                         }
                     }

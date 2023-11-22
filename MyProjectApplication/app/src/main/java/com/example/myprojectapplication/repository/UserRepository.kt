@@ -1,5 +1,7 @@
 package com.example.myprojectapplication.repository
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myprojectapplication.FriendData
 import com.example.myprojectapplication.TodoList
@@ -127,4 +129,56 @@ class UserRepository {
             }
         })
     }
+
+
+    fun updateTimeTodo(id: String, thing_Todo: String, newTimeTodo: Int) {
+        val todoListRef = userRef.child(id).child("todo")
+        todoListRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (childSnapshot in snapshot.children) {
+                    val todoItem = childSnapshot.getValue(TodoList::class.java)
+                    Log.d("Firebase", "Retrieved todoItem: $todoItem")
+                    if (todoItem?.thing_Todo == thing_Todo) {
+                        val todoItemRef = todoListRef.child(childSnapshot.key!!)
+                        val updateMap = mapOf<String, Any>("time_Todo" to newTimeTodo)
+                        todoItemRef.updateChildren(updateMap)
+                        Log.d("Firebase", "Update time_Todo before: ${todoItem.time_Todo}, after: $newTimeTodo")
+                        break
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("Firebase", "아 외않돼냐고")
+            }
+        })
+    }
+
+
+    fun getTimeTodo(id: String, thing_Todo: String): LiveData<Int?> {
+        val timeTodoLiveData = MutableLiveData<Int?>()
+        val todoListRef = userRef.child(id).child("todo")
+        todoListRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (childSnapshot in snapshot.children) {
+                    val todoItem = childSnapshot.getValue(TodoList::class.java)
+                    if (todoItem?.thing_Todo == thing_Todo) {
+                        timeTodoLiveData.postValue(todoItem?.time_Todo)
+                        break
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("Firebase", "아 외않돼냐고")
+            }
+        })
+        return timeTodoLiveData
+    }
+
+
+
+
+
+
 }

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -84,15 +85,23 @@ class TimerEntryFragment : Fragment() {
         }
 
         binding?.btnMoveTimer?.setOnClickListener {
-            // 체크된 항목들만 선택
-            val checkedTodoList = todayList.filter { it.isChecked }
+            // 체크된 항목 선택
+            val checkedTodo = todayList.find { it.isChecked }
 
-            // thing_Todo만 Bundle에 넣어 전달
-            val bundle = Bundle().apply {
-                putStringArrayList("thingList", ArrayList(checkedTodoList.map { it.thing_Todo }))
+            //객체 자체를 번들로 넘기기 위해 parcelable 사용하여야함!
+            checkedTodo?.let { todo ->
+                // TodoList 객체를 Bundle에 넣어 전달
+                val bundle = Bundle().apply {
+                    putParcelable("todoItem", todo)
+                }
+                findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment, bundle)
+            } ?: run {
+                // 체크된 항목이 없으면 토스트 메시지
+                Toast.makeText(context, "체크된 항목이 없습니다.", Toast.LENGTH_SHORT).show()
             }
-            findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment, bundle)
         }
+
+
 
 
     }

@@ -60,4 +60,12 @@ class TodoViewModel : ViewModel() {
     fun deleteFriend(id: String, deleteId: String) {
         todoRepository.deleteFriend(id, deleteId)
     }
+
+    fun updateTimeTodo(id: String, thing_Todo: String, newTime: Int) {
+        todoRepository.updateTimeTodo(id, thing_Todo, newTime)
+    }
+
+    fun getTimeTodo(id: String, thing_Todo: String): LiveData<Int?> {
+        return todoRepository.getTimeTodo(id, thing_Todo)
+    }
 }
