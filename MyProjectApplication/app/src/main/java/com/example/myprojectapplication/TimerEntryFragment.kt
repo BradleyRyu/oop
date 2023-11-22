@@ -76,6 +76,7 @@ class TimerEntryFragment : Fragment() {
 
         //그냥 어레이로는 입력 안받은 칸 때문에 그래프 일~토 초기화 어려움
         //아래와 같이 적었는데 대신 해당하는 위치에 안찍히고 이상한 곳에 찎히는 문제 발생 수정하기
+        //배열로 하려면 없는 값 0 채우든 해야할 듯
         viewModel.observeUser(viewModel.currentUserId?:"").observe(viewLifecycleOwner) { userData ->
             // userData가 null이 아니면 투두리스트를 띄우기
             userData?.let {
