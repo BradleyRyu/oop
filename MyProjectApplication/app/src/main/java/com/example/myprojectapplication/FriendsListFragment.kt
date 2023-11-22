@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentFriendsListBinding
@@ -20,7 +21,7 @@ class FriendsListFragment : Fragment() {
 
     var binding: FragmentFriendsListBinding? = null
     val viewModel: TodoViewModel by activityViewModels()
-    val bundle = this.arguments
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,24 +43,14 @@ class FriendsListFragment : Fragment() {
         binding?.btnSetting?.setOnClickListener {
             findNavController().navigate(R.id.action_friendsListFragment_to_setUserFragment2)
         }
-
+        val id = viewModel.currentUserId?:"null"
         binding?.recFriends?.layoutManager = LinearLayoutManager(context)
         val friendsAdapter = FriendsAdapter(mutableListOf())
-        binding?.recFriends?.adapter = friendsAdapter
 
-        bundle?.getString("id").let {
-            if (it != null) {
-                viewModel.observeFriendsList(it).observe(viewLifecycleOwner, Observer {friendsList ->
-                    friendsAdapter.friendsList = friendsList.toMutableList()
-                    friendsAdapter.notifyDataSetChanged()
-                })
-            }
-            else {
-                viewModel.observeFriendsList("asdf").observe(viewLifecycleOwner, Observer {friendsList ->
-                    friendsAdapter.friendsList = friendsList.toMutableList()
-                    friendsAdapter.notifyDataSetChanged()
-                })
-            }
-        }
+        viewModel.observeFriendsList(id).observe(viewLifecycleOwner, Observer {friendsList ->
+            friendsAdapter.friendsList = friendsList.toMutableList()
+            friendsAdapter.notifyDataSetChanged()
+            binding?.recFriends?.adapter = friendsAdapter
+        })
     }
 }

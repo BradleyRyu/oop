@@ -25,6 +25,7 @@ class FriendslistPopupFragment: DialogFragment() {
     var binding: FriendslistPopupBinding? = null
     val viewModel: TodoViewModel by activityViewModels()
 
+    // 팝업창 사이즈 조절
     override fun onStart() {
         super.onStart()
 
@@ -50,7 +51,7 @@ class FriendslistPopupFragment: DialogFragment() {
         binding?.btnDelete?.setOnClickListener {
             Toast.makeText(binding?.root?.context, "$friendId  Delete Friend...", Toast.LENGTH_SHORT).show()
             friendId?.let {
-                viewModel.deleteFriend(it, friendId)
+                viewModel.deleteFriend(it, friendId) // 친구 삭제 함수
             }
             dismiss()
         }

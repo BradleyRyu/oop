@@ -27,16 +27,12 @@ class SetUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding?.btnBackfriendslist?.setOnClickListener {
-//            findNavController().navigate(R.id.action_setUserFragment_to_friendsListFragment2)
-//        }
-
         // 사용자의 상태에 따른 이미지 변경
         // binding?.userImage?.setImageResource()
-
+        val id = viewModel.currentUserId
         binding?.btnFindFriendsId?.setOnClickListener {
             binding?.txtNewfriends?.text?.toString().let {
-                viewModel.addNewFriends("asdf", binding?.txtNewfriends?.text.toString(), "ONLINE")
+                viewModel.addNewFriends(id?:"null", binding?.txtNewfriends?.text.toString(), "ONLINE")
                 Toast.makeText(binding?.root?.context, "Append Friend!!", Toast.LENGTH_SHORT).show()
             }
         }
