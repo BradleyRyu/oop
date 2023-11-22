@@ -171,11 +171,13 @@ class TimerFragment : Fragment() {
                     //투두리스트 작성 시 목표 시간 적게 가능하면 > 목표시간 이후 리사이클러뷰에 나오지 않게, 최대 사이클 목표시간만큼만 가능하게
                     //viewModel.updateTime("currentTodoID", viewModel.getTodo("currentTodoID").time_Todo + 1)
                     completedCycles++ // 타이머가 한 사이클 돌 때마다 completedCycles 증가
+                    viewModel.tempCycle++
 
                     //타이머 다 끝나면 다시 TimerEntryFragment로 이동, beep 사운드: 네비게이션 전환될 때에는 실행하지 않음.
                     when(remainCycles){
                         0 -> {
                             viewModel.updateTimeTodo(viewModel.currentUserId ?: "입력안됨", todoItem?.thing_Todo ?: "", completedCycles)
+                            viewModel.updateTempCycles(viewModel.currentUserId ?: "", viewModel.tempCycle)//템프 사이클 업데이트
                             findNavController().navigate(R.id.action_timerFragment_to_timerEntryFragment)
                         }
                         else -> {
@@ -183,6 +185,7 @@ class TimerFragment : Fragment() {
                                 soundPool.play(it, 1F, 1F, 0, 0, 1F)
                             }
                             viewModel.updateTimeTodo(viewModel.currentUserId ?: "입력안됨", todoItem?.thing_Todo ?: "", completedCycles)
+                            viewModel.updateTempCycles(viewModel.currentUserId ?: "", viewModel.tempCycle) //템프 사이클 업데이트
                             startStudyCycle(remainCycles)
                         }
                     }

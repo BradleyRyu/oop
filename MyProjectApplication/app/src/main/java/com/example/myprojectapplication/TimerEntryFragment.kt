@@ -1,11 +1,17 @@
 package com.example.myprojectapplication
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -21,6 +27,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import java.time.LocalDate
 import kotlinx.datetime.*
+import java.util.Calendar
 
 
 //리사이클러뷰 어댑터는 작성해둠
@@ -66,8 +73,30 @@ class TimerEntryFragment : Fragment() {
         //chart 관련 함수 호출
         chart = binding?.chartWeek
         setChart()
-        addChart()
-        setData()
+
+        //그냥 어레이로는 입력 안받은 칸 때문에 그래프 일~토 초기화 어려움
+        //아래와 같이 적었는데 대신 해당하는 위치에 안찍히고 이상한 곳에 찎히는 문제 발생 수정하기
+        viewModel.observeUser(viewModel.currentUserId?:"").observe(viewLifecycleOwner) { userData ->
+            // userData가 null이 아니면 투두리스트를 띄우기
+            userData?.let {
+                // 투두리스트를 UI에 띄우는 코드
+                todoList = it.todo.toMutableList()
+                todayList = getTodayTodoList(todoList)
+                binding?.recShowToDo?.adapter = TodayAdapter(todayList)
+
+                val weekDays = listOf("일", "월", "화", "수", "목", "금", "토")
+                val studyCyclesMap = weekDays.associateWith { 0 }.toMutableMap()
+                it.studyCycles.forEach { (day, value) ->
+                    studyCyclesMap[day] = value
+                }
+                val studyCyclesList = studyCyclesMap.entries.map { entry -> Pair(entry.key, entry.value) }
+
+                addChart(studyCyclesList)
+                setData()
+            }
+        }
+
+        setMidnightAlarm()
 
 
         //리사이클러 뷰 코드
@@ -119,7 +148,7 @@ class TimerEntryFragment : Fragment() {
             setPinchZoom(true) // 확대/축소 가능
 
             // X축 설정
-            xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("월", "화", "수", "목", "금", "토", "일")) // 일~월로 x축 표시되도록 format 변경
+            xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("일", "월", "화", "수", "목", "금", "토")) // 일~월로 x축 표시되도록 format 변경
             xAxis.position = XAxis.XAxisPosition.BOTTOM // X축을 밑으로
             xAxis.setDrawGridLines(false) // X축 라인 끔
 
@@ -132,24 +161,14 @@ class TimerEntryFragment : Fragment() {
         }
     }
 
-    /*
-    차트에 데이터 추가 일단 임시 값 넣음
-    공부시간 기록하여서 자동으로 추가되도록 추후에 설정하면 됨.
-    추후 설정시 for문 형태가 아니라
-    entries.add(Entry(0f, 8f))    // "월", 8
-    위와 같은 형태로 하루 지날 떄 마다 덮어쓰며 업데이트 되도록 설정하면 될 듯
-     */
-
-    //수치 > 전부 f 사용해야함
-    private fun addChart() {
+    private fun addChart(studyCycles: List<Pair<String, Int>>) {
         val entries = ArrayList<Entry>()
-        val hours = arrayOf(8f, 6f, 7f, 8.5f, 7.5f, 6.5f, 9f) // 임의의 시간 float으로 설정!
+        val hours = studyCycles.map { it.second.toFloat() }
 
         //데이터 포인트 차례로 추가
         for (i in hours.indices) {
             entries.add(Entry(i.toFloat(), hours[i]))// 각 요일 0~6(실수), 해당하는 시간 add
         }
-        //아래 val dataset, lineDataSets, lineData 과정 잘 이해 안감
         val dataSet = LineDataSet(entries, "공부한 시간") // 데이터 셋 생성
         val lineDataSets: ArrayList<ILineDataSet> = ArrayList()
         lineDataSets.add(dataSet)
@@ -172,12 +191,50 @@ class TimerEntryFragment : Fragment() {
                     it.month_Todo == today.monthNumber &&
                     it.day_Todo == today.dayOfMonth
         }.toMutableList()
+
     }
+
+    //밤 00시가 되면 유저데이터클래스의 배열에 템프 값 넣도록하는 함수! 알람리시버 클래스 작성해둠
+    //인텐트 부분 다시 공부하기
+    //00시에 해당하는 요일의 배열에 템프 값 들어가는지 확인
+    private fun setMidnightAlarm() {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            if (before(Calendar.getInstance())) {
+                add(Calendar.DAY_OF_MONTH, 1)
+            }
+        }
+
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+            putExtra("userId", viewModel.currentUserId)
+            // putExtra("tempCycle", viewModel.tempCycle) // tempCycle는 AlarmReceiver에서 직접 접근하므로 여기서 넘기지 않아도 될 듯?
+        }
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+    }
+
+
 
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding=null
     }
+
+
+
 
 }

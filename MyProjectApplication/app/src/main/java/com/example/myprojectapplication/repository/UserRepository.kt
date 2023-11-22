@@ -177,8 +177,11 @@ class UserRepository {
     }
 
 
+    fun updateTempCycles(id: String, studyTime: Int) {
+        userRef.child(id).child("tempCycles").setValue(studyTime)
+    }
 
-
-
-
+    fun updateStudyCycles(id: String, dayOfWeek: String, studyTime: Int) {
+        userRef.child(id).child("studyCycles").child(dayOfWeek).setValue(studyTime)
+    }
 }
