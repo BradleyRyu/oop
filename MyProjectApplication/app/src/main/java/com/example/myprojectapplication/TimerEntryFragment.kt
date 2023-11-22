@@ -37,7 +37,6 @@ class TimerEntryFragment : Fragment() {
     var binding:FragmentTimerEntryBinding? = null
     var chart:LineChart?=null //프라이빗 붙여야 하는지?
 
-    val id = "test"
     val viewModel: TodoViewModel by activityViewModels()
     private var todoList: MutableList<TodoList> = mutableListOf()
     private var todayList: MutableList<TodoList> = mutableListOf()
@@ -71,6 +70,7 @@ class TimerEntryFragment : Fragment() {
 
 
         //리사이클러 뷰 코드
+        val id = viewModel.currentUserId ?: "id 입력 안됨 "
 
         // ViewModel에서 사용자의 투두리스트 데이터를 관찰
         viewModel.observeUser(id).observe(viewLifecycleOwner) { userData ->

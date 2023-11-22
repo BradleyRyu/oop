@@ -98,7 +98,8 @@ class TodoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        id = arguments?.getString("id").toString()
+        //id = arguments?.getString("id")?: "id 입력 안됨 " 아이디 번들이 아니라 뷰모델로
+        id = viewModel.currentUserId ?: "id 입력 안됨 "
         // ViewModel에서 사용자의 투두리스트 데이터를 관찰
         viewModel.observeUser(id).observe(viewLifecycleOwner) { userData ->
             // userData가 null이 아니면 투두리스트를 띄우기

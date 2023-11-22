@@ -9,7 +9,7 @@ import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.repository.UserRepository
 
 data class UserDataClass(
-    val id: String = "",
+    //val id: String = "",
     var todo: MutableList<TodoList> = mutableListOf(),
     var time: Int = 0,
     var state: Boolean = false,
@@ -23,6 +23,9 @@ class TodoViewModel : ViewModel() {
 
     private val _friendsLiveData = MutableLiveData<List<FriendData>>()
     val friendsLiveData: LiveData<List<FriendData>> get() = _friendsLiveData
+
+
+    var currentUserId: String? = null
 
     fun observeFriendsList(id: String): LiveData<List<FriendData>> {
         todoRepository.observeFriendsList(id, _friendsLiveData)

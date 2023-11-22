@@ -105,7 +105,7 @@ class TimerFragment : Fragment() {
     private val viewModel: TodoViewModel by activityViewModels()
 
     fun updateTime() {
-        var id = "asdf"
+        var id = "asdf" //id 뷰모델의 currentid로 설정
         val newTime = 1000 // 임시값
         viewModel.updateTime(id, newTime)
     }
