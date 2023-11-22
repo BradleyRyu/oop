@@ -28,6 +28,7 @@ class CalendarFragment : Fragment() {
     // fragment가 생성될 당시 실행될 코드 ( 화면 구성 )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     // oncreate에서 화면 구성이 끝난 이후 실행될 코드
@@ -44,19 +45,22 @@ class CalendarFragment : Fragment() {
         val todayYear: Int = calendar.get(Calendar.YEAR)
         val todayMonth: Int = calendar.get(Calendar.MONTH) + 1
         val todayDay: Int = calendar.get(Calendar.DATE)
+        // 오늘 날짜를 담는 자료구조
         val todayDate = LocalDate.of(todayYear, todayMonth, todayDay)
-        binding?.txtSelectedDate?.text = "${todayDate.year}년 ${todayDate.month}월 ${todayDate.dayOfMonth}일"
+        // 오늘의 날짜 출력
+        binding?.txtSelectedDate?.text = "${todayDate.year}년 ${todayDate.monthValue}월 ${todayDate.dayOfMonth}일"
+        // 오늘에 해당하는 Todo-List 출력
         displayTodoListForDate(todayDate)
+        binding?.recTodoOfTheDay?.layoutManager = LinearLayoutManager(context)
 
+        // 사용자가 지정한 날짜가 바뀌는 이벤트마다 실행하는 코드
         binding?.calendar?.setOnDateChangeListener { _, yyyy, mm, dd ->
-            // to_do list와 연계를 위해, 선택된 날짜를 변수에 저장하여 활용함
+            // 사용자가 선택한 날짜를 담는 자료구조
             val selectedDate = LocalDate.of(yyyy, mm + 1, dd)
+            // 선택한 날짜 출력
             binding?.txtSelectedDate?.text = "${yyyy}년 ${mm + 1}월 ${dd}일"
-            viewModel.observeUser(id).observe(viewLifecycleOwner) { userData ->
-                displayTodoListForDate(selectedDate)
-            }
-            // 선택된 날짜에 해당하는 Todolist 목록을 캘린더로 불러오기
-            binding?.recTodoOfTheDay?.layoutManager = LinearLayoutManager(context)
+            // 선택한 날짜에 해당하는 Todo-List 출력
+            displayTodoListForDate(selectedDate)
         }
 
         // Inflate the layout for this fragment
@@ -79,8 +83,8 @@ class CalendarFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun displayTodoListForDate(date: LocalDate) {
-        viewModel.observeUser(id).observe(viewLifecycleOwner) { userData ->
-            userData?.let {
+        viewModel.observeUser(id).observe(viewLifecycleOwner) { userID ->
+            userID?.let {
                 val todoList = it.todo.toMutableList()
                 val todoListOnSelectedDay = getTodoListForDate(todoList, date)
                 val todoAdapter = TodoAdapter(todoListOnSelectedDay)
