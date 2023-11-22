@@ -59,18 +59,6 @@ class CalendarFragment : Fragment() {
     //버튼 클릭 시 이동 ( Navigation )
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //To-do List로 이동
-        binding?.btnToTodo?.setOnClickListener {
-            findNavController().navigate(R.id.action_calenderFragment_to_todoFragment)
-        }
-        //유저 ID로 이동
-        //친구 List로 이동
-        binding?.btnFriendslist?.setOnClickListener {
-            findNavController().navigate(R.id.action_calenderFragment_to_friendsListFragment)
-        }
-        //타이머로 이동
-        binding?.btnTimer?.setOnClickListener {
-            findNavController().navigate(R.id.action_calenderFragment_to_timerEntryFragment)
-        }
+
     }
 }
