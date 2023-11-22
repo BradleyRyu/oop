@@ -174,12 +174,14 @@ class TimerFragment : Fragment() {
 
                     //타이머 다 끝나면 다시 TimerEntryFragment로 이동, beep 사운드: 네비게이션 전환될 때에는 실행하지 않음.
                     when(remainCycles){
-                        0 -> findNavController().navigate(R.id.action_timerFragment_to_timerEntryFragment)
+                        0 -> {
+                            viewModel.updateTimeTodo(viewModel.currentUserId ?: "입력안됨", todoItem?.thing_Todo ?: "", completedCycles)
+                            findNavController().navigate(R.id.action_timerFragment_to_timerEntryFragment)
+                        }
                         else -> {
                             beepSound?.let{
                                 soundPool.play(it, 1F, 1F, 0, 0, 1F)
                             }
-                            //completedCycles++ // 타이머가 한 사이클 돌 때마다 completedCycles 증가
                             viewModel.updateTimeTodo(viewModel.currentUserId ?: "입력안됨", todoItem?.thing_Todo ?: "", completedCycles)
                             startStudyCycle(remainCycles)
                         }
