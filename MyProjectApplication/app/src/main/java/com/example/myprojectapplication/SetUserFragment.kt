@@ -27,14 +27,17 @@ class SetUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 사용자의 상태에 따른 이미지 변경
-        // binding?.userImage?.setImageResource()
         val id = viewModel.currentUserId
+
+        binding?.txtUserId?.text = id?:"null"
+        binding?.userImage?.setImageResource(R.drawable.user)
+
         binding?.btnFindFriendsId?.setOnClickListener {
             binding?.txtNewfriends?.text?.toString().let {
                 viewModel.addNewFriends(id?:"null", binding?.txtNewfriends?.text.toString(), "ONLINE")
                 Toast.makeText(binding?.root?.context, "Append Friend!!", Toast.LENGTH_SHORT).show()
             }
+            binding?.txtNewfriends?.text = null
         }
     }
 }

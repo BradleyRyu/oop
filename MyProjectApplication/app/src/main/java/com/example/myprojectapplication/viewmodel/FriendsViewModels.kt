@@ -13,7 +13,10 @@ data class UserDataClass(
     var todo: MutableList<TodoList> = mutableListOf(),
     var time: Int = 0,
     var state: Boolean = false,
-    val friendsList: List<FriendsList> = emptyList()
+    val friendsList: List<FriendsList> = emptyList(),
+
+    //각요일별 학습량 배열 추가
+    val studyCycles: MutableMap<String, Int> = mutableMapOf() // 요일별 학습량
 )
 
 class TodoViewModel : ViewModel() {
@@ -26,6 +29,7 @@ class TodoViewModel : ViewModel() {
 
 
     var currentUserId: String? = null
+    var tempCycle: Int = 0
 
     fun observeFriendsList(id: String): LiveData<List<FriendData>> {
         todoRepository.observeFriendsList(id, _friendsLiveData)
@@ -68,4 +72,14 @@ class TodoViewModel : ViewModel() {
     fun getTimeTodo(id: String, thing_Todo: String): LiveData<Int?> {
         return todoRepository.getTimeTodo(id, thing_Todo)
     }
+
+    fun updateTempCycles(id: String, studyTime: Int) {
+        todoRepository.updateTempCycles(id, studyTime)
+    }
+
+    fun updateStudyCycles(id: String, dayOfWeek: String, studyTime: Int) {
+        todoRepository.updateStudyCycles(id, dayOfWeek, studyTime)
+    }
+
+
 }

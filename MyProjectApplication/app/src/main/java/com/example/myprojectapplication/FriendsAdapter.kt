@@ -56,8 +56,8 @@ class FriendslistPopupFragment: DialogFragment() {
         }
 
         binding?.btnWithfriend?.setOnClickListener {
-            Toast.makeText(binding?.root?.context, "$friendId  With Friend!!!",
-                Toast.LENGTH_SHORT).show()
+            Toast.makeText(binding?.root?.context, "$friendId  With Friend!!!", Toast.LENGTH_SHORT).show()
+            dismiss()
         }
 
         builder.setView(binding?.root)
