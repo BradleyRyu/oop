@@ -44,15 +44,14 @@ class FriendslistPopupFragment: DialogFragment() {
         binding = FriendslistPopupBinding.inflate(inflater)
 
         val bundle = this.arguments  // arguments를 통해 번들을 가져옴
-        val friendId = bundle?.getString("id")
+        val friendId = bundle?.getString("id")?:"null"
 
         binding?.popupTitle?.text = friendId
+        val id = viewModel.currentUserId?:"null"
 
         binding?.btnDelete?.setOnClickListener {
             Toast.makeText(binding?.root?.context, "$friendId  Delete Friend...", Toast.LENGTH_SHORT).show()
-            friendId?.let {
-                viewModel.deleteFriend(it, friendId) // 친구 삭제 함수
-            }
+            viewModel.deleteFriend(id, friendId) // 친구 삭제 함수
             dismiss()
         }
 
