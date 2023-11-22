@@ -177,8 +177,21 @@ class UserRepository {
     }
 
 
+    fun updateTempCycles(id: String, studyTime: Int) {
+        userRef.child(id).child("tempCycles").setValue(studyTime)
+    }
 
+    fun updateStudyCycles(id: String, dayOfWeek: String, studyTime: Int) {
+        userRef.child(id).child("studyCycles").child(dayOfWeek).setValue(studyTime)
+    }
 
+    fun getTempCycles(id: String): LiveData<Int> {
+        val tempCyclesLiveData = MutableLiveData<Int>()
+        userRef.child(id).child("tempCycles").get().addOnSuccessListener {
+            tempCyclesLiveData.value = it.getValue(Int::class.java) ?: 0
+        }
+        return tempCyclesLiveData
+    }
 
 
 }

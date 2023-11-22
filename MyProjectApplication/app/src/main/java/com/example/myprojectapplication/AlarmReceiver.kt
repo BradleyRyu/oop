@@ -45,5 +45,3 @@ class UpdateService : IntentService("UpdateService") {
         }
     }
 }
-
-
