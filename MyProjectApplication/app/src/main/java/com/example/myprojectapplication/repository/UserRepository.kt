@@ -37,8 +37,10 @@ class UserRepository {
     fun observeFriendsList(id: String, friendsLiveData: MutableLiveData<List<FriendData>>) {
         userRef.child(id).child("friendsList").addValueEventListener( object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val friendsList = snapshot.getValue<List<FriendData>>()
-                friendsLiveData.postValue(friendsList)
+                when ( val friendsList = snapshot.getValue<List<FriendData>>()) {
+                    null -> friendsLiveData.postValue(emptyList())
+                    else -> friendsLiveData.postValue(friendsList)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -175,10 +177,4 @@ class UserRepository {
         })
         return timeTodoLiveData
     }
-
-
-
-
-
-
 }

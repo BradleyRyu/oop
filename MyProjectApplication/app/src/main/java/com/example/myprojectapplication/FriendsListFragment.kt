@@ -34,15 +34,6 @@ class FriendsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.btnCalender?.setOnClickListener {
-            findNavController().navigate(R.id.action_friendsListFragment_to_calenderFragment)
-        }
-        binding?.btnTodo?.setOnClickListener {
-            findNavController().navigate(R.id.action_friendsListFragment_to_todoFragment)
-        }
-        binding?.btnSetting?.setOnClickListener {
-            findNavController().navigate(R.id.action_friendsListFragment_to_setUserFragment2)
-        }
         val id = viewModel.currentUserId?:"null"
         binding?.recFriends?.layoutManager = LinearLayoutManager(context)
         val friendsAdapter = FriendsAdapter(mutableListOf())
