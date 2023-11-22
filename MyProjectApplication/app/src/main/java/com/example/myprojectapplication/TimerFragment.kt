@@ -61,7 +61,7 @@ class TimerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //템프사이클 0부터 시작 안하고 기존 값ㅂ부터 시작하게 하기 위한 용도!
+        //템프사이클 0부터 시작 안하고 기존 값부터 시작하게 하기 위한 용도!
         viewModel.observeTempCycles(viewModel.currentUserId ?: "")
 
         // updateTime test
