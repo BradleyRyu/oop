@@ -48,6 +48,11 @@ class UserRepository {
     }
 
     fun addNewFriends(id: String, newFriends: FriendData) {
+
+        // 서버에 입력받은 친구가 존재하는지 확인하고 존재하는 경우 추가
+        // 친구의 상태에 따라 친구 목록 업데이트
+
+
         userRef.child(id).child("friendsList").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val currentFriendsList = snapshot.getValue<List<FriendData>>() ?: emptyList()
