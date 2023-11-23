@@ -38,7 +38,11 @@ class UserRepository {
         userRef.child(id).child("friendsList").addValueEventListener( object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val friendsList = snapshot.getValue<List<FriendData>>()
-                friendsLiveData.postValue(friendsList)
+                when (friendsList) {
+                    null -> friendsLiveData.postValue(emptyList())
+                    else -> friendsLiveData.postValue(friendsList)
+                }
+                //friendsLiveData.postValue(friendsList)
             }
 
             override fun onCancelled(error: DatabaseError) {
