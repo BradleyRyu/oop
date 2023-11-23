@@ -29,17 +29,13 @@ import java.time.LocalDate
 import kotlinx.datetime.*
 import java.util.Calendar
 
-
-//리사이클러뷰 어댑터는 작성해둠
-
-
-
 /* Chart xml code
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart_week"
             android:layout_width="match_parent"
             android:layout_height="200dp" />
  */
+
 class TimerEntryFragment : Fragment() {
 
     var binding:FragmentTimerEntryBinding? = null
@@ -49,7 +45,7 @@ class TimerEntryFragment : Fragment() {
     private var todoList: MutableList<TodoList> = mutableListOf()
     private var todayList: MutableList<TodoList> = mutableListOf()
 
-    //바인딩 처리
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,8 +63,6 @@ class TimerEntryFragment : Fragment() {
         binding?.btnMoveTimer?.setOnClickListener {
             findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment)
         }
-
-        //버튼 삭제함. 추가적인 버튼 필요하면 이미지 버튼으로 새로 만들기
 
         //chart 관련 함수 호출
         chart = binding?.chartWeek
@@ -118,7 +112,7 @@ class TimerEntryFragment : Fragment() {
             // 체크된 항목 선택
             val checkedTodo = todayList.find { it.isChecked }
 
-            //객체 자체를 번들로 넘기기 위해 parcelable 사용하여야함!
+            //객체 자체를 번들로 넘기기 위해 parcelable 사용하여야 함!
             checkedTodo?.let { todo ->
                 // TodoList 객체를 Bundle에 넣어 전달
                 val bundle = Bundle().apply {
