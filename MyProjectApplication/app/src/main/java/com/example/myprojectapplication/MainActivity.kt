@@ -8,18 +8,21 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.myprojectapplication.databinding.ActivityMainBinding
 
+
 class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.frmFrag) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        val navController = binding.frmFrag.getFragment<NavHostFragment>().navController
-        // 제 컴퓨터에서는 액션 바가 설정이 안 되네요 ㅠㅠ.. 혹시 되는 분 부탁드립니다..!
         // setupActionBarWithNavController(navController)
         binding.bottomNav.setupWithNavController(navController)
-        setContentView(binding.root)
     }
-
 }
+
+
