@@ -15,7 +15,6 @@ import com.example.myprojectapplication.viewmodel.TodoViewModel
 class LoginFragment : Fragment() {
 
     var binding: FragmentLoginBinding? = null
-    private var userId: String? = null
     private val todoViewModel: TodoViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -38,6 +37,7 @@ class LoginFragment : Fragment() {
             todoViewModel.currentUserId = inputId
 
             // 캘린더뷰로 전환
+            todoViewModel.changeState(inputId)
             findNavController().navigate(R.id.action_loginFragment_to_calenderFragment)
         }
     }

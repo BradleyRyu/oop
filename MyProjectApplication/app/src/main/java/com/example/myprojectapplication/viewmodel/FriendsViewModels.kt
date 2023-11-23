@@ -27,11 +27,15 @@ class TodoViewModel : ViewModel() {
     private val _friendsLiveData = MutableLiveData<List<FriendData>>()
     val friendsLiveData: LiveData<List<FriendData>> get() = _friendsLiveData
 
+    private val _friendStateLiveData = MutableLiveData<String>()
+    val friendStateLiveData: LiveData<String> get() = _friendStateLiveData
+
 
     var currentUserId: String? = null
     var tempCycle: Int = 0
 
     fun observeFriendsList(id: String): LiveData<List<FriendData>> {
+        // 조건
         todoRepository.observeFriendsList(id, _friendsLiveData)
         return friendsLiveData
     }
@@ -91,6 +95,15 @@ class TodoViewModel : ViewModel() {
     }
 
 
+    fun changeState(id: String) {
+        todoRepository.changeState(id)
+    }
+    fun checkUserExist(id: String): LiveData<Boolean> {
+        return todoRepository.checkUserExist(id)
+    }
 
-
+    fun observeFriendState(id: String, friendId: String): LiveData<String> {
+        todoRepository.observeFriendState(id, friendId, _friendStateLiveData)
+        return friendStateLiveData
+    }
 }

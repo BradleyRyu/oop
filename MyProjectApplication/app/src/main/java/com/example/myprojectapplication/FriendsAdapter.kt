@@ -29,12 +29,11 @@ class FriendslistPopupFragment: DialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        val dialog = dialog
-        if (dialog != null) {
+        dialog?.let {
             val width = ViewGroup.LayoutParams.MATCH_PARENT
             val height = ViewGroup.LayoutParams.WRAP_CONTENT
-            dialog.window?.setLayout(width, height)
-            dialog.window?.setGravity(Gravity.CENTER)
+            it.window?.setLayout(width, height)
+            it.window?.setGravity(Gravity.CENTER)
         }
     }
 
@@ -66,7 +65,6 @@ class FriendslistPopupFragment: DialogFragment() {
 }
 
 class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Adapter<FriendsAdapter.Holder>() {
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = FriendsListUnitBinding.inflate(LayoutInflater.from(parent.context))
         return Holder(binding)
@@ -79,9 +77,14 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
 
     class Holder(private val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(friendData: FriendData) {
-
+            val viewModel = TodoViewModel()
             binding.txtId.text = friendData.id
-            binding.txtState.text = friendData.state
+
+            viewModel.currentUserId?.let {
+                viewModel.observeFriendState(it, friendData.id).observeForever {
+                    binding.txtState.text = it.toString()
+                }
+            }
 
             binding.root.setOnClickListener {// 토스트 하기 위한 코드
                 Toast.makeText(binding.root.context, "ID : ${friendData.id} State : ${friendData.state}",

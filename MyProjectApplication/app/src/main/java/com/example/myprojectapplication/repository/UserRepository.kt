@@ -37,12 +37,11 @@ class UserRepository {
     fun observeFriendsList(id: String, friendsLiveData: MutableLiveData<List<FriendData>>) {
         userRef.child(id).child("friendsList").addValueEventListener( object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val friendsList = snapshot.getValue<List<FriendData>>()
-                when (friendsList) {
-                    null -> friendsLiveData.postValue(emptyList())
-                    else -> friendsLiveData.postValue(friendsList)
+                val friendsList = snapshot.children.mapNotNull {
+                    it.getValue(FriendData::class.java)
                 }
-                //friendsLiveData.postValue(friendsList)
+                friendsLiveData.postValue(friendsList)
+
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -50,6 +49,20 @@ class UserRepository {
             }
         })
     }
+
+    fun observeFriendState(id: String, friendId: String, stateLiveData: MutableLiveData<String>) {
+        userRef.child(friendId).child("state").addValueEventListener( object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val state = snapshot.getValue(Boolean::class.java)?:false
+                stateLiveData.postValue(state.toString())
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
 
     fun addNewFriends(id: String, newFriends: FriendData) {
 
@@ -114,7 +127,8 @@ class UserRepository {
 
 
     fun deleteFriend(id: String, deleteId: String) {
-        userRef.child(id).child("friendsList").addValueEventListener( object: ValueEventListener {
+
+        userRef.child(id).child("friendsList").addListenerForSingleValueEvent( object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val currentFriendsList = snapshot.getValue<List<FriendData>>() ?: emptyList()
                 val newFriendsList = currentFriendsList.filter { it.id != deleteId }.toMutableList()
@@ -126,19 +140,6 @@ class UserRepository {
             }
         })
     }
-
-    fun withFriend(id: String, withId: String) {
-        userRef.child(id).child("friendsList").addValueEventListener( object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // exception
-            }
-        })
-    }
-
 
     fun updateTimeTodo(id: String, thing_Todo: String, newTimeTodo: Int) {
         val todoListRef = userRef.child(id).child("todo")
@@ -202,5 +203,30 @@ class UserRepository {
         return tempCyclesLiveData
     }
 
+    fun checkUserExist(id: String): LiveData<Boolean> {
+        val exist = MutableLiveData<Boolean>()
+        userRef.child(id).addListenerForSingleValueEvent( object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                exist.value = snapshot.exists()
+            }
 
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+        return exist
+    }
+
+    fun changeState(id: String) {
+        userRef.child(id).child("state").addListenerForSingleValueEvent( object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val state = snapshot.getValue(Boolean::class.java) ?: false
+                userRef.child(id).child("state").setValue(!state)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
 }

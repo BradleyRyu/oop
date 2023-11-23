@@ -33,15 +33,14 @@ class FriendsListFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val id = viewModel.currentUserId?:"null"
-        binding?.recFriends?.layoutManager = LinearLayoutManager(context)
         val friendsAdapter = FriendsAdapter(mutableListOf())
-
-        viewModel.observeFriendsList(id).observe(viewLifecycleOwner, Observer {friendsList ->
-            friendsAdapter.friendsList = friendsList.toMutableList()
-            friendsAdapter.notifyDataSetChanged()
-            binding?.recFriends?.adapter = friendsAdapter
-        })
+        viewModel.currentUserId?.let {
+            viewModel.observeFriendsList(it).observe(viewLifecycleOwner, Observer {friendsList ->
+                friendsAdapter.friendsList = friendsList.toMutableList()
+                friendsAdapter.notifyDataSetChanged()
+            })
+        }
+        binding?.recFriends?.adapter = friendsAdapter
+        binding?.recFriends?.layoutManager = LinearLayoutManager(context)
     }
 }

@@ -27,15 +27,23 @@ class SetUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val id = viewModel.currentUserId
+        val id = viewModel.currentUserId?:"null"
 
-        binding?.txtUserId?.text = id?:"null"
+        binding?.txtUserId?.text = id
         binding?.userImage?.setImageResource(R.drawable.user)
 
         binding?.btnFindFriendsId?.setOnClickListener {
-            binding?.txtNewfriends?.text?.toString().let {
-                viewModel.addNewFriends(id?:"null", binding?.txtNewfriends?.text.toString(), "ONLINE")
-                Toast.makeText(binding?.root?.context, "Append Friend!!", Toast.LENGTH_SHORT).show()
+            val newFriend = binding?.txtNewfriends?.text.toString()
+            val state = viewModel.observeFriendState(id, newFriend).toString()
+            viewModel.checkUserExist(newFriend).observe(viewLifecycleOwner) {
+                when ( it ) {
+                    true -> {
+                        viewModel.addNewFriends(id, newFriend, state)
+                        Toast.makeText(binding?.root?.context, "$newFriend Append", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> Toast.makeText(binding?.root?.context, "Not exist Friend!!", Toast.LENGTH_SHORT).show()
+                }
+
             }
             binding?.txtNewfriends?.text = null
         }
