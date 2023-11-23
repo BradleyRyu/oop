@@ -81,6 +81,7 @@ class TodoViewModel : ViewModel() {
         todoRepository.updateStudyCycles(id, dayOfWeek, studyTime)
     }
 
+    //템프사이클 관찰
     fun observeTempCycles(id: String): LiveData<UserDataClass> {
         todoRepository.observeUser(id, _userLiveData)
         todoRepository.getTempCycles(id).observeForever { tempCycle ->
