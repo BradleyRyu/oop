@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import TodayAdapter
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -112,12 +113,10 @@ class TimerEntryFragment : Fragment() {
             // 체크된 항목 선택
             val checkedTodo = todayList.find { it.isChecked }
 
-            //객체 자체를 번들로 넘기기 위해 parcelable 사용하여야 함!
             checkedTodo?.let { todo ->
-                // TodoList 객체를 Bundle에 넣어 전달
-                val bundle = Bundle().apply {
-                    putParcelable("todoItem", todo)
-                }
+                // TodoList 객체의 인덱스를 찾아 번들로 넘김
+                val todoIndex = todayList.indexOf(todo)
+                val bundle = bundleOf("todoIndex" to todoIndex)
                 findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment, bundle)
             } ?: run {
                 // 체크된 항목이 없으면 토스트 메시지
@@ -129,6 +128,12 @@ class TimerEntryFragment : Fragment() {
 
 
     }
+
+
+
+
+
+
 
     // 아래로 Chart 설정
     private fun setChart() {

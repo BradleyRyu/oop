@@ -45,6 +45,7 @@ class TimerFragment : Fragment() {
     //alarmSound
     private val soundPool = SoundPool.Builder().build()
     private var beepSound: Int? = null
+
     private var todoItem: TodoList? = null
 
     //사이클 마다 +1 후 > 파이어베이스에 타임올림
@@ -104,8 +105,17 @@ class TimerFragment : Fragment() {
         //사운드풀 설정
         beepSound = soundPool.load(requireContext(), R.raw.alarmsound, 1)
 
-        todoItem = arguments?.getParcelable<TodoList>("todoItem")
-        binding?.txtWhatToDO?.text = todoItem?.thing_Todo
+        //객체를 통째로 옮기는 것이 아니라, 인덱스만 넘겨받아 사용
+        val todoIndex = arguments?.getInt("todoIndex")
+        viewModel.observeUser(viewModel.currentUserId?: "").observe(viewLifecycleOwner, Observer { userData ->
+            val todoList = userData.todo
+            todoItem = if (todoIndex != null && todoIndex < todoList.size) {
+                todoList[todoIndex]
+            } else {
+                null
+            }
+            binding?.txtWhatToDO?.text = todoItem?.thing_Todo
+        })
 
     }
 
