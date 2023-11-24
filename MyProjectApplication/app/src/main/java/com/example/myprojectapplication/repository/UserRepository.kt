@@ -186,13 +186,14 @@ class UserRepository {
         userRef.child(id).child("tempCycles").setValue(studyTime)
     }
 
-    fun updateStudyCycles(id: String, dayOfWeek: String, studyTime: Int) {
-        userRef.child(id).child("studyCycles").child(dayOfWeek).setValue(studyTime)
+    fun updateStudyCycles(id: String, studyCycles: List<Int>) {
+        userRef.child(id).child("studyCycles").setValue(studyCycles)
     }
+
 
     fun getTempCycles(id: String): LiveData<Int> {
         val tempCyclesLiveData = MutableLiveData<Int>()
-        userRef.child(id).child("tempCycles").get().addOnSuccessListener {
+        userRef.child(id ).child("tempCycles").get().addOnSuccessListener {
             tempCyclesLiveData.value = it.getValue(Int::class.java) ?: 0
         }
         return tempCyclesLiveData
@@ -225,4 +226,44 @@ class UserRepository {
             }
         })
     }
+
+    fun updateDate(id: String, date: String) {
+        userRef.child(id).child("date").setValue(date)
+    }
+
+
+    /*
+    fun observeTempCycles(id: String): LiveData<Int> {
+        val tempCycles = MutableLiveData<Int>()
+        userRef.child(id).child("tempCycles").addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                tempCycles.value = dataSnapshot.value.toString().toInt()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error here
+            }
+        })
+        return tempCycles
+    }
+     */
+    fun observeTempCycles(userId: String): LiveData<Int> {
+        val tempCyclesLiveData = MutableLiveData<Int>()
+        database.getReference("users/$userId/tempCycles").addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dataSnapshot.getValue(Long::class.java)?.let { value ->
+                    val tempCycles = value.toInt()  // Long 타입의 값을 Int로 변환
+                    tempCyclesLiveData.postValue(tempCycles)
+                }
+            }
+
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+        return tempCyclesLiveData
+    }
+
+
 }

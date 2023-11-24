@@ -1,20 +1,18 @@
 package com.example.myprojectapplication
 
 import TodayAdapter
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentTimerEntryBinding
@@ -26,9 +24,7 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import java.time.LocalDate
 import kotlinx.datetime.*
-import java.util.Calendar
 
 /* Chart xml code
         <com.github.mikephil.charting.charts.LineChart
@@ -62,8 +58,11 @@ class TimerEntryFragment : Fragment() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        updateStudyCycles()
 
         binding?.btnMoveTimer?.setOnClickListener {
             findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment)
@@ -73,6 +72,7 @@ class TimerEntryFragment : Fragment() {
         chart = binding?.chartWeek
         setChart()
 
+        /*
         //그냥 어레이로는 입력 안받은 칸 때문에 그래프 일~토 초기화 어려움
         //아래와 같이 적었는데 대신 해당하는 위치에 안찍히고 이상한 곳에 찎히는 문제 발생 수정하기
         //배열로 하려면 없는 값 0 채우든 해야할 듯
@@ -96,8 +96,7 @@ class TimerEntryFragment : Fragment() {
             }
         }
 
-        //setMidnightAlarm()
-
+         */
 
         //리사이클러 뷰 코드
 
@@ -196,6 +195,41 @@ class TimerEntryFragment : Fragment() {
         }.toMutableList()
 
     }
+
+
+   //업데이트는 되는데 첫번째에만 이상하게 작동함.
+    //처음 만들고 돌리면 temp사이클을 바로 0으로 만들고 study사이클에 넣음
+    //초기화 문제? >> 데이트와 스터디사이클 배열 미리 준비하기
+    //지금보니 무조건 쓰는 문제 발생하는 것 같기도?
+    //처음에는 날짜 없으니까 무조건 들어가는 듯
+    //데이트 널일 때, 널은 아닌데 투데이도 아닐때, 오늘일 때 >> 이렇게 나눠서 각각 초기화, 업데이트, 아무것도안함
+
+    fun updateStudyCycles() {
+        val today = Clock.System.todayAt(TimeZone.currentSystemDefault())
+        val todayString = today.toString()
+
+        viewModel.observeTempCycles(userId).observe(viewLifecycleOwner, Observer { tempCycles ->
+            viewModel.observeUser(userId).observe(viewLifecycleOwner) { userData ->
+                userData?.let {
+                    if (it.date != todayString) {
+                        val studyCycles = it.studyCycles?.toMutableList() ?: MutableList(7) { 0 }
+                        studyCycles[today.dayOfWeek.ordinal] = tempCycles
+                        viewModel.updateStudyCycles(userId, studyCycles)
+                        viewModel.updateTempCycles(userId, 0)
+                        viewModel.updateDate(userId, todayString)
+                    }
+                }
+            }
+        })
+    }
+
+
+
+
+
+
+
+
 
 
 

@@ -16,7 +16,8 @@ data class UserDataClass(
     val friendsList: List<FriendsList> = emptyList(),
 
     //각요일별 학습량 배열 추가
-    val studyCycles: MutableMap<String, Int> = mutableMapOf() // 요일별 학습량
+    val studyCycles: List<Int> ? = null, // 요일별 학습량
+    var date :String = ""
 )
 
 class TodoViewModel : ViewModel() {
@@ -56,9 +57,6 @@ class TodoViewModel : ViewModel() {
         todoRepository.removeTodoItem(id, index)
     }
 
-    fun updateTime(id: String, newTime: Int) {
-        todoRepository.updateTime(id, newTime)
-    }
 
     fun addNewFriends(id: String, newFriends: String, state: String) {
         val newFriend = FriendData(newFriends, state)
@@ -81,12 +79,12 @@ class TodoViewModel : ViewModel() {
         todoRepository.updateTempCycles(id, studyTime)
     }
 
-    fun updateStudyCycles(id: String, dayOfWeek: String, studyTime: Int) {
-        todoRepository.updateStudyCycles(id, dayOfWeek, studyTime)
+    fun updateStudyCycles(id: String, studyCycles: MutableList<Int>) {
+        todoRepository.updateStudyCycles(id, studyCycles)
     }
 
     //템프사이클 관찰
-    fun observeTempCycles(id: String): LiveData<UserDataClass> {
+    fun observeTempForUpdate(id: String): LiveData<UserDataClass> {
         todoRepository.observeUser(id, _userLiveData)
         todoRepository.getTempCycles(id).observeForever { tempCycle ->
             this.tempCycle = tempCycle
@@ -106,4 +104,15 @@ class TodoViewModel : ViewModel() {
     fun observeUserState(id: String):Boolean {
         return true
     }
+
+    fun updateDate(id: String, date: String) {
+        todoRepository.updateDate(id, date)
+    }
+
+    fun observeTempCycles(id: String): LiveData<Int> {
+        return todoRepository.observeTempCycles(id)
+    }
+
+
+
 }
