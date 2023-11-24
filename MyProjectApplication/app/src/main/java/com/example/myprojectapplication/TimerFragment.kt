@@ -51,6 +51,9 @@ class TimerFragment : Fragment() {
     //사이클 마다 +1 후 > 파이어베이스에 타임올림
     private var completedCycles = 0
 
+    val userId : String by lazy{
+        viewModel.currentUserId ?:""
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,7 +66,7 @@ class TimerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //템프사이클 0부터 시작 안하고 기존 값부터 시작하게 하기 위한 용도!
-        viewModel.observeTempCycles(viewModel.currentUserId ?: "")
+        viewModel.observeTempCycles(userId)
 
         // updateTime test
         //updateTime()
@@ -107,7 +110,7 @@ class TimerFragment : Fragment() {
 
         //객체를 통째로 옮기는 것이 아니라, 인덱스만 넘겨받아 사용
         val todoIndex = arguments?.getInt("todoIndex")
-        viewModel.observeUser(viewModel.currentUserId?: "").observe(viewLifecycleOwner, Observer { userData ->
+        viewModel.observeUser(userId).observe(viewLifecycleOwner, Observer { userData ->
             val todoList = userData.todo
             todoItem = if (todoIndex != null && todoIndex < todoList.size) {
                 todoList[todoIndex]
@@ -167,7 +170,7 @@ class TimerFragment : Fragment() {
                 var remainCycles = cycles
 
                 //파이어베이스에 있으면 그 값, 없으면 0
-                viewModel.getTimeTodo(viewModel.currentUserId ?: "", todoItem?.thing_Todo ?: "").observe(viewLifecycleOwner, Observer { timeTodo ->
+                viewModel.getTimeTodo(userId, todoItem?.thing_Todo ?: "").observe(viewLifecycleOwner, Observer { timeTodo ->
                     completedCycles = timeTodo ?: 0
                 })
 
@@ -183,23 +186,23 @@ class TimerFragment : Fragment() {
 
                     //학습사이클 완료 > time_Todo 값 업데이트
                     //투두리스트 작성 시 목표 시간 적게 가능하면 > 목표시간 이후 리사이클러뷰에 나오지 않게, 최대 사이클 목표시간만큼만 가능하게
-                    //viewModel.updateTime("currentTodoID", viewModel.getTodo("currentTodoID").time_Todo + 1)
+                    //viewModel.updateTime("currentTodoID", todoItem?.thing_Todo?. + 1)
                     completedCycles++ // 타이머가 한 사이클 돌 때마다 completedCycles 증가
                     viewModel.tempCycle++
 
                     //타이머 다 끝나면 다시 TimerEntryFragment로 이동, beep 사운드: 네비게이션 전환될 때에는 실행하지 않음.
                     when(remainCycles){
                         0 -> {
-                            viewModel.updateTimeTodo(viewModel.currentUserId ?: "입력안됨", todoItem?.thing_Todo ?: "", completedCycles)
-                            viewModel.updateTempCycles(viewModel.currentUserId ?: "", viewModel.tempCycle)//템프 사이클 업데이트
+                            viewModel.updateTimeTodo(userId, todoItem?.thing_Todo ?: "", completedCycles )
+                            viewModel.updateTempCycles(userId, viewModel.tempCycle)//템프 사이클 업데이트
                             findNavController().navigate(R.id.action_timerFragment_to_timerEntryFragment)
                         }
                         else -> {
                             beepSound?.let{
                                 soundPool.play(it, 1F, 1F, 0, 0, 1F)
                             }
-                            viewModel.updateTimeTodo(viewModel.currentUserId ?: "입력안됨", todoItem?.thing_Todo ?: "", completedCycles)
-                            viewModel.updateTempCycles(viewModel.currentUserId ?: "", viewModel.tempCycle) //템프 사이클 업데이트
+                            viewModel.updateTimeTodo(userId, todoItem?.thing_Todo ?: "", completedCycles )
+                            viewModel.updateTempCycles(userId, viewModel.tempCycle) //템프 사이클 업데이트
                             startStudyCycle(remainCycles)
                         }
                     }

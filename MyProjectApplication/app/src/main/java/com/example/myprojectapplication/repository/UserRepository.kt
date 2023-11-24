@@ -150,9 +150,8 @@ class UserRepository {
                     Log.d("Firebase", "Retrieved todoItem: $todoItem")
                     if (todoItem?.thing_Todo == thing_Todo) {
                         val todoItemRef = todoListRef.child(childSnapshot.key!!)
-                        val updateMap = mapOf<String, Any>("time_Todo" to newTimeTodo)
+                        val updateMap = mapOf<String, Any>("achievedCycle" to newTimeTodo)
                         todoItemRef.updateChildren(updateMap)
-                        // Log.d("Firebase", "Update time_Todo before: ${todoItem.time_Todo}, after: $newTimeTodo")
                         break
                     }
                 }
@@ -173,7 +172,7 @@ class UserRepository {
                 for (childSnapshot in snapshot.children) {
                     val todoItem = childSnapshot.getValue(TodoList::class.java)
                     if (todoItem?.thing_Todo == thing_Todo) {
-                        timeTodoLiveData.postValue(todoItem?.goalCycle)
+                        timeTodoLiveData.postValue(todoItem?.achievedCycle)
                         break
                     }
                 }

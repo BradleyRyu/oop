@@ -46,6 +46,10 @@ class TimerEntryFragment : Fragment() {
     private var todoList: MutableList<TodoList> = mutableListOf()
     private var todayList: MutableList<TodoList> = mutableListOf()
 
+    val userId : String by lazy{
+        viewModel.currentUserId ?: ""
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,7 +76,7 @@ class TimerEntryFragment : Fragment() {
         //그냥 어레이로는 입력 안받은 칸 때문에 그래프 일~토 초기화 어려움
         //아래와 같이 적었는데 대신 해당하는 위치에 안찍히고 이상한 곳에 찎히는 문제 발생 수정하기
         //배열로 하려면 없는 값 0 채우든 해야할 듯
-        viewModel.observeUser(viewModel.currentUserId?:"").observe(viewLifecycleOwner) { userData ->
+        viewModel.observeUser(userId).observe(viewLifecycleOwner) { userData ->
             // userData가 null이 아니면 투두리스트를 띄우기
             userData?.let {
                 // 투두리스트를 UI에 띄우는 코드
@@ -92,14 +96,13 @@ class TimerEntryFragment : Fragment() {
             }
         }
 
-        setMidnightAlarm()
+        //setMidnightAlarm()
 
 
         //리사이클러 뷰 코드
-        val id = viewModel.currentUserId ?: "id 입력 안됨 "
 
         // ViewModel에서 사용자의 투두리스트 데이터를 관찰
-        viewModel.observeUser(id).observe(viewLifecycleOwner) { userData ->
+        viewModel.observeUser(userId).observe(viewLifecycleOwner) { userData ->
             // userData가 null이 아니면 투두리스트를 띄우기
             userData?.let {
                 // 투두리스트를 UI에 띄우는 코드
@@ -193,39 +196,6 @@ class TimerEntryFragment : Fragment() {
         }.toMutableList()
 
     }
-
-    //밤 00시가 되면 유저데이터클래스의 배열에 템프 값 넣도록하는 함수! 알람리시버 클래스 작성해둠
-    //인텐트 부분 다시 공부하기
-    //00시에 해당하는 요일의 배열에 템프 값 들어가는지 확인
-    private fun setMidnightAlarm() {
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            if (before(Calendar.getInstance())) {
-                add(Calendar.DAY_OF_MONTH, 1)
-            }
-        }
-
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(requireContext(), AlarmReceiver::class.java).apply {
-            putExtra("userId", viewModel.currentUserId)
-            // putExtra("tempCycle", viewModel.tempCycle) // tempCycle는 AlarmReceiver에서 직접 접근하므로 여기서 넘기지 않아도 될 듯?
-        }
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-
-        alarmManager.setInexactRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            pendingIntent
-        )
-    }
-
 
 
 
