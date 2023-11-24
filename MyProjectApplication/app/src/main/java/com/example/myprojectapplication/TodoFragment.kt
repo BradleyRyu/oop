@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -78,10 +80,15 @@ class TodoFragment : Fragment() {
         // ItemTouchHelper를 RecyclerView에 연결 ( 스와이프를 통한 리스트 삭제를 위함 )
         itemTouchHelper.attachToRecyclerView(binding?.recTodo)
 
+        // 목표 사이클 수 설정을 위한 스피너( Dropdown Menu ) 설정부분
+        val goalCycle = listOf("목표 사이클 수를 설정하세요.", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+        val spinnerAdapter =
+            context?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, goalCycle) }
+        binding?.spnCycle?.adapter = spinnerAdapter
+
         // 할 일을 추가하는 버튼을 클릭하면 생기는 이벤트.
         binding?.btnAdd?.setOnClickListener {
             // 추가할 todolist에 대한 정보를 받고 기존 리스트에 추가함
-            // AddToList fragment로부터 읽어온 값을 추가함 (할 일과 날짜를 받아옴) -> 추후 구현
             // 상단에 있는 텍스트 입력창을 통해 할 일과 언제 할 일인지를 읽고 값을 추가함
             // editText 박스 내부 input year, month, day에 입력한 값을 정수로 변환하여 함수를 통해 입력 받음
 
@@ -97,13 +104,18 @@ class TodoFragment : Fragment() {
             // 사용자가 일을 할 날짜
             val inputDay: String = binding?.inputDay?.text.toString()
 
+            // 사용자가 목표하는 사이클 수를 스피너로부터 얻어옴
+            val inputCycle: String = binding?.spnCycle?.selectedItem.toString()
+
+
             // 입력받은 문자열의 유효성을 검사하는 과정. Integer.parseInt() 함수에서 널값이나 빈 칸인 값이 오면 프로그램이 오류로 종료되어 toInt로 형 변환
-            if( isValidString(whatToDo, inputYear, inputMonth, inputDay) ) {
+            if( isValidString(whatToDo, inputYear, inputMonth, inputDay, inputCycle) ) {
                 addList( whatToDo,
                     inputYear.toInt(),
                     inputMonth.toInt(),
                     inputDay.toInt(),
-                    false
+                    inputCycle.toInt(),
+                    0
                 )
                 // 추가하기 버튼을 누를 시, 칸을 비움
                 makeTextBoxesBlank()
@@ -144,10 +156,11 @@ class TodoFragment : Fragment() {
         whentodo_year: Int?,
         whentodo_month: Int?,
         whentodo_day: Int?,
-        donetodo: Boolean
+        goalCycle: Int?,
+        achievedCycle: Int?
     ): Boolean {
         return if( isValidDate(whentodo_year, whentodo_month, whentodo_day) ) {
-            todoList.add(TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, 0, false))
+            todoList.add(TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, goalCycle, achievedCycle))
             // 입력된 리스트를 포함하여 다시 todo리스트 정렬하고
             todoList = sortTodoList(todoList)
 
@@ -176,6 +189,7 @@ class TodoFragment : Fragment() {
         binding?.inputYear?.setText("")
         binding?.inputMonth?.setText("")
         binding?.inputDay?.setText("")
+        binding?.spnCycle?.setSelection(0)
     }
 
     // 입력한 날짜 값이 유효한 값인지 검사함. ( 각 월의 최대 일수 및 연도에 따른 윤달 체크 )
@@ -206,8 +220,8 @@ class TodoFragment : Fragment() {
     }
 
     // 무엇을 할지, 언제 할지에 대한 값이 빈 문자열이거나 null이라면 잘못된 입력에 대한 toast를 띄움
-    private fun isValidString(whattodo: String?, whenYear: String?, whenMonth: String?, whenDay: String?): Boolean {
-        if ( whattodo.isNullOrBlank() || whenYear.isNullOrBlank() || whenMonth.isNullOrBlank() || whenDay.isNullOrBlank() ) {
+    private fun isValidString(whattodo: String?, whenYear: String?, whenMonth: String?, whenDay: String?, inputCycle: String?): Boolean {
+        if ( whattodo.isNullOrBlank() || whenYear.isNullOrBlank() || whenMonth.isNullOrBlank() || whenDay.isNullOrBlank() || inputCycle == "목표 사이클 수를 설정하세요.") {
             Toast.makeText(binding?.root?.context, "모든 칸에 입력 바랍니다.", Toast.LENGTH_SHORT).show()
             return false
         }

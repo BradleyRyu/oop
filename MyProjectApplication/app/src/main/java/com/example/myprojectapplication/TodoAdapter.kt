@@ -30,7 +30,8 @@ class TodoAdapter(val todoList: MutableList<TodoList>): RecyclerView.Adapter<Tod
         fun bind(todolist: TodoList) {
             binding.txtTodo.text = todolist.thing_Todo
             binding.txtDate.text = "${todolist.year_Todo.toString()}년 ${todolist.month_Todo.toString()}월 ${todolist.day_Todo.toString()}일"
-            binding.txtDoneCycle.text = todolist.time_Todo.toString()
+            binding.txtGoalCycle.text = todolist.goalCycle.toString()
+            binding.txtDoneCycle.text = todolist.achievedCycle.toString()
         }
 
     }
