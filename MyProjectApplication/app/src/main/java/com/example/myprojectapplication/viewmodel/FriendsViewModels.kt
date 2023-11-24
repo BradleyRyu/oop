@@ -98,6 +98,7 @@ class TodoViewModel : ViewModel() {
     fun changeState(id: String) {
         todoRepository.changeState(id)
     }
+
     fun checkUserExist(id: String): LiveData<Boolean> {
         return todoRepository.checkUserExist(id)
     }

@@ -43,15 +43,18 @@ class FriendslistPopupFragment: DialogFragment() {
         binding = FriendslistPopupBinding.inflate(inflater)
 
         val bundle = this.arguments  // arguments를 통해 번들을 가져옴
-        val friendId = bundle?.getString("id")?:"null"
+        val friendId = bundle?.getString("id")
 
-        binding?.popupTitle?.text = friendId
-        val id = viewModel.currentUserId?:"null"
-
-        binding?.btnDelete?.setOnClickListener {
-            Toast.makeText(binding?.root?.context, "$friendId  Delete Friend...", Toast.LENGTH_SHORT).show()
-            viewModel.deleteFriend(id, friendId) // 친구 삭제 함수
-            dismiss()
+        friendId.let {
+            binding?.popupTitle?.text = it
+            viewModel.currentUserId?.let {
+                val id = it
+                binding?.btnDelete?.setOnClickListener {
+                    Toast.makeText(binding?.root?.context, "$friendId  Delete Friend...", Toast.LENGTH_SHORT).show()
+                    friendId?.let { it1 -> viewModel.deleteFriend(id, it1) } // 친구 삭제 함수
+                    dismiss()
+                }
+            }
         }
 
         binding?.btnWithfriend?.setOnClickListener {
@@ -82,7 +85,12 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
 
             viewModel.currentUserId?.let {
                 viewModel.observeFriendState(it, friendData.id).observeForever {
-                    binding.txtState.text = it.toString()
+                    val state = it.toString()
+                    binding.txtState.text = state
+                    binding.btnPopupFriends.setImageResource( when ( state ) {
+                        "ONLINE" -> R.drawable.online
+                        else -> R.drawable.offline
+                    })
                 }
             }
 
@@ -90,11 +98,6 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
                 Toast.makeText(binding.root.context, "ID : ${friendData.id} State : ${friendData.state}",
                     Toast.LENGTH_SHORT).show()
             }
-
-            binding.btnPopupFriends.setImageResource(when(friendData.state) {
-                "OFFLINE" -> R.drawable.offline
-                else -> R.drawable.online
-            })
 
             binding.btnPopupFriends.setOnClickListener {
                 val bundle = Bundle()

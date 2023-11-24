@@ -127,9 +127,9 @@ class UserRepository {
 
 
     fun deleteFriend(id: String, deleteId: String) {
-
         userRef.child(id).child("friendsList").addListenerForSingleValueEvent( object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                // 친구가 없는 경우 발생하는 오류를 방지하기 위해 emptylist를 반환할 수 있도록 한다.
                 val currentFriendsList = snapshot.getValue<List<FriendData>>() ?: emptyList()
                 val newFriendsList = currentFriendsList.filter { it.id != deleteId }.toMutableList()
                 userRef.child(id).child("friendsList").setValue(newFriendsList)
