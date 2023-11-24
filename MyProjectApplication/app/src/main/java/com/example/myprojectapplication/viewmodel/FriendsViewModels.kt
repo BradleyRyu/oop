@@ -94,11 +94,6 @@ class TodoViewModel : ViewModel() {
         return userLiveData
     }
 
-
-    fun changeState(id: String) {
-        todoRepository.changeState(id)
-    }
-
     fun checkUserExist(id: String): LiveData<Boolean> {
         return todoRepository.checkUserExist(id)
     }
@@ -106,5 +101,9 @@ class TodoViewModel : ViewModel() {
     fun observeFriendState(id: String, friendId: String): LiveData<String> {
         todoRepository.observeFriendState(id, friendId, _friendStateLiveData)
         return friendStateLiveData
+    }
+
+    fun observeUserState(id: String):Boolean {
+        return true
     }
 }

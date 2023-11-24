@@ -26,24 +26,35 @@ class SetUserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = viewModel.currentUserId
+
+        val id: String? = viewModel.currentUserId
 
         binding?.txtUserId?.text = id
-        binding?.userImage?.setImageResource(R.drawable.user)
-
-        binding?.btnFindFriendsId?.setOnClickListener {
-            val newFriend = binding?.txtNewfriends?.text.toString() // 사용자가
-            val state = id?.let { it1 -> viewModel.observeFriendState(it1, newFriend).toString() }
-            viewModel.checkUserExist(newFriend).observe(viewLifecycleOwner) {
-                when ( it ) {
-                    true -> {
-                        state?.let { it1 -> viewModel.addNewFriends(id, newFriend, it1) }
-                        Toast.makeText(binding?.root?.context, "$newFriend Append", Toast.LENGTH_SHORT).show()
-                    }
-                    else -> Toast.makeText(binding?.root?.context, "Not exist Friend!!", Toast.LENGTH_SHORT).show()
-                }
+        id.let {
+            viewModel.currentUserId?.let {
+                binding?.userImage?.setImageResource( when ( viewModel.observeUserState(it) ) {
+                    true -> R.drawable.online
+                    else -> R.drawable.offline
+                })
             }
-            binding?.txtNewfriends?.text = null
+        }
+
+        binding?.btnFindFriendsId?.setOnClickListener { // 친구 추가 버튼을 누를 때 작동
+            viewModel.currentUserId?.let {
+                val userId = it
+                val newFriend = binding?.txtNewfriends?.text.toString() // 사용자가 입력한 친구 아이디를 받는다.
+                val state = viewModel.observeFriendState(it, newFriend).toString() // 친구의 상태 받아오기
+
+                viewModel.checkUserExist(newFriend).observe(viewLifecycleOwner) {   // 새로운 친구가 파이어베이스에 존재하는지 파악
+                    when (it) {
+                        true -> {
+                            viewModel.addNewFriends(userId, newFriend, state)
+                        }
+                        else -> Toast.makeText(binding?.root?.context, "Not exist Friend!!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                binding?.txtNewfriends?.text = null
+            }
         }
     }
 }

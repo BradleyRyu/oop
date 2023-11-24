@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myprojectapplication.FriendData
+import com.example.myprojectapplication.FriendsList
 import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.viewmodel.UserDataClass
 import com.google.firebase.database.DataSnapshot
@@ -41,7 +42,6 @@ class UserRepository {
                     it.getValue(FriendData::class.java)
                 }
                 friendsLiveData.postValue(friendsList)
-
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -65,18 +65,14 @@ class UserRepository {
 
 
     fun addNewFriends(id: String, newFriends: FriendData) {
-
-        // 서버에 입력받은 친구가 존재하는지 확인하고 존재하는 경우 추가
-        // 친구의 상태에 따라 친구 목록 업데이트
-
-
         userRef.child(id).child("friendsList").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val currentFriendsList = snapshot.getValue<List<FriendData>>() ?: emptyList()
-                val newFriendsList = currentFriendsList.toMutableList() + newFriends
+                val child = snapshot.children.mapNotNull {
+                    it.getValue(FriendData::class.java)
+                }
+                val newFriendsList = child.toMutableList() + newFriends
                 userRef.child(id).child("friendsList").setValue(newFriendsList)
             }
-
             override fun onCancelled(error: DatabaseError) {
                 // exception
             }
@@ -206,15 +202,16 @@ class UserRepository {
         val exist = MutableLiveData<Boolean>()
         userRef.child(id).addListenerForSingleValueEvent( object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                exist.value = snapshot.exists()
+                exist.postValue(snapshot.exists())
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                // 에러 처리
             }
         })
         return exist
     }
+
 
     fun changeState(id: String) {
         userRef.child(id).child("state").addListenerForSingleValueEvent( object : ValueEventListener {
