@@ -51,7 +51,12 @@ class FriendslistPopupFragment: DialogFragment() {
                 val id = it
                 binding?.btnDelete?.setOnClickListener {
                     Toast.makeText(binding?.root?.context, "$friendId  Delete Friend...", Toast.LENGTH_SHORT).show()
-                    friendId?.let { it1 -> viewModel.deleteFriend(id, it1) } // 친구 삭제 함수
+                    friendId?.let { viewModel.deleteFriend(id, it) } // 친구 삭제 함수
+                    dismiss()
+                }
+
+                binding?.btnWithfriend?.setOnClickListener {
+                    Toast.makeText(binding?.root?.context, "$friendId  With Friend!!!", Toast.LENGTH_SHORT).show()
                     dismiss()
                 }
             }
@@ -84,14 +89,7 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
             binding.txtId.text = friendData.id
 
             viewModel.currentUserId?.let {
-                viewModel.observeFriendState(it, friendData.id).observeForever {
-                    val state = it.toString()
-                    binding.txtState.text = state
-                    binding.btnPopupFriends.setImageResource( when ( state ) {
-                        "ONLINE" -> R.drawable.online
-                        else -> R.drawable.offline
-                    })
-                }
+                viewModel.observeFriendState(it, friendData.id).observeForever {}
             }
 
             binding.root.setOnClickListener {// 토스트 하기 위한 코드
@@ -99,10 +97,17 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
                     Toast.LENGTH_SHORT).show()
             }
 
+            binding.btnPopupFriends.setImageResource( when ( friendData.state ) {
+                "ONLINE" -> R.drawable.online
+                "OFFLINE" -> R.drawable.offline
+                else -> R.drawable.user
+            })
+
+            binding.txtState.text = friendData.state
+
             binding.btnPopupFriends.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putString("id", friendData.id)
-                bundle.putString("state", friendData.state)
                 val friendPopupWindow = FriendslistPopupFragment()
                 friendPopupWindow.arguments = bundle
                 friendPopupWindow.show((it.context as AppCompatActivity).supportFragmentManager, "FriendslistPopupFragment")

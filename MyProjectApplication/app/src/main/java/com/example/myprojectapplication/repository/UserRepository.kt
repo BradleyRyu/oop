@@ -62,22 +62,36 @@ class UserRepository {
             }
         })
     }
-
-
-    fun addNewFriends(id: String, newFriends: FriendData) {
-        userRef.child(id).child("friendsList").addListenerForSingleValueEvent(object : ValueEventListener {
+    fun addNewFriends(id: String, newFriendId: String) {
+        userRef.child(newFriendId).child("state").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val child = snapshot.children.mapNotNull {
-                    it.getValue(FriendData::class.java)
-                }
-                val newFriendsList = child.toMutableList() + newFriends
-                userRef.child(id).child("friendsList").setValue(newFriendsList)
+                val friendState = snapshot.getValue(Boolean::class.java) ?: false
+                val stateString = if (friendState) "ONLINE" else "OFFLINE"
+                val newFriend = FriendData(newFriendId, stateString)
+
+                userRef.child(id).child("friendsList").addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val friendsList = snapshot.children.mapNotNull {
+                            it.getValue(FriendData::class.java)
+                        }
+                        if (!friendsList.any { it.id == newFriendId }) {
+                            val newFriendsList = friendsList.toMutableList() + newFriend
+                            userRef.child(id).child("friendsList").setValue(newFriendsList)
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // error handling
+                    }
+                })
             }
+
             override fun onCancelled(error: DatabaseError) {
-                // exception
+                // error handling
             }
         })
     }
+
 
     fun addTodoItem(id: String, newItem: TodoList) {
         userRef.child(id).child("todo").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -214,17 +228,8 @@ class UserRepository {
     }
 
 
-    fun changeState(id: String) {
-        userRef.child(id).child("state").addListenerForSingleValueEvent( object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val state = snapshot.getValue(Boolean::class.java) ?: false
-                userRef.child(id).child("state").setValue(!state)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
+    fun changeUserState(id: String, state: Boolean) {
+        userRef.child(id).child("state").setValue(state)
     }
 
     fun updateDate(id: String, date: String) {
@@ -264,9 +269,4 @@ class UserRepository {
         })
         return tempCyclesLiveData
     }
-
-
-
-
-
 }
