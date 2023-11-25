@@ -76,10 +76,20 @@ class TimerEntryFragment : Fragment() {
             userData?.let {
                 // 투두리스트를 UI에 띄우는 코드
                 todoList = it.todo.toMutableList()
+
+                //isChecked 달성하면 true로
+                todoList.forEach { todo ->
+                    val achievedCycle = todo.achievedCycle ?: 0
+                    val goalCycle = todo.goalCycle ?: 0
+                    if (achievedCycle >= goalCycle) {
+                        todo.isChecked = true
+                    }
+                }
+                // 업데이트된 리스트를 파이어베이스에 업로드
+                viewModel.updateTodoItem(userId, todoList)
+
                 todayList = getTodayTodoList(todoList)
                 binding?.recShowToDo?.adapter = TodayAdapter(todayList)
-
-
             }
         }
 
