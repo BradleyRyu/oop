@@ -13,6 +13,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+
+/*
+addAchievedCycle : 사이클 수행 후 추가함.
+addTempCycles : Temp 사이클 추가함
+
+기존 번들 방식에서 뷰모델로 수정했습니다!
+ */
 class TimerViewModel(private val userId: String, private val _todo: TodoList) : ViewModel() {
     private val db by lazy { Firebase.database }
 
@@ -74,6 +81,14 @@ class TimerViewModel(private val userId: String, private val _todo: TodoList) : 
     }
 }
 
+
+/*
+팩토리 패턴
+TimerViewModel 의 인스턴스 생성!
+팩토리를 통해 인스턴스 요청 보내고,
+어떻게 TimerViewModel이 생성되는지는 신경 안써도 됨
+모듈화의 일종
+ */
 class TimerViewModelFactory(private val userId: String, private val todo: TodoList) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
