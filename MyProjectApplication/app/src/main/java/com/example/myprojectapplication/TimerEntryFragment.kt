@@ -3,14 +3,13 @@ package com.example.myprojectapplication
 import TodayAdapter
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -18,28 +17,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentTimerEntryBinding
 import com.example.myprojectapplication.viewmodel.TodoViewModel
 import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import kotlinx.datetime.*
 
 class TimerEntryFragment : Fragment() {
 
-    var binding:FragmentTimerEntryBinding? = null
-    var chart: BarChart?=null //프라이빗 붙여야 하는지?
+    var _binding: FragmentTimerEntryBinding? = null
+    val binding get() = _binding!!
+
+    var chart: BarChart? = null //프라이빗 붙여야 하는지?
 
     val viewModel: TodoViewModel by activityViewModels()
     private var todoList: MutableList<TodoList> = mutableListOf()
     private var todayList: MutableList<TodoList> = mutableListOf()
 
-    val userId : String by lazy{
+    val userId: String by lazy {
         viewModel.currentUserId ?: ""
     }
 
@@ -47,13 +43,11 @@ class TimerEntryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-
-        binding = FragmentTimerEntryBinding.inflate(inflater)
-        binding?.recShowToDo?.layoutManager = LinearLayoutManager(context)
-        return binding?.root
+    ): View {
+        _binding = FragmentTimerEntryBinding.inflate(inflater)
+        _binding?.recShowToDo?.layoutManager = LinearLayoutManager(context)
+        return binding.root
     }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,12 +55,12 @@ class TimerEntryFragment : Fragment() {
 
         updateStudyCycles() //스터디 사이클 업데이트하고 date, tempCycle 초기화
 
-        binding?.btnMoveTimer?.setOnClickListener {
+        binding.btnMoveTimer.setOnClickListener {
             findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment)
         }
 
         //chart 관련 함수 호출
-        chart = binding?.chartWeek
+        chart = binding.chartWeek
         setChart()
         drawChart()
 
@@ -77,42 +71,39 @@ class TimerEntryFragment : Fragment() {
                 // 투두리스트를 UI에 띄우는 코드
                 todoList = it.todo.toMutableList()
 
-                //isChecked 달성하면 true로
-                todoList.forEach { todo ->
-                    val achievedCycle = todo.achievedCycle ?: 0
-                    val goalCycle = todo.goalCycle ?: 0
-                    if (achievedCycle >= goalCycle) {
-                        todo.isChecked = true
-                    }
-                }
-                // 업데이트된 리스트를 파이어베이스에 업로드
-                viewModel.updateTodoItem(userId, todoList)
+//                //isChecked 달성하면 true로
+//                todoList.forEach { todo ->
+//                    val achievedCycle = todo.achievedCycle ?: 0
+//                    val goalCycle = todo.goalCycle ?: 0
+//                    if (achievedCycle >= goalCycle) {
+//                        todo.isChecked = true
+//                    }
+//                }
+//
+//                // 업데이트된 리스트를 파이어베이스에 업로드
+//                viewModel.updateTodoItem(userId, todoList)
 
-                todayList = getTodayTodoList(todoList)
-                binding?.recShowToDo?.adapter = TodayAdapter(todayList)
+                binding.recShowToDo.adapter = TodayAdapter(getTodayTodoList(todoList))
             }
         }
 
-        binding?.btnMoveTimer?.setOnClickListener {
-            // 체크된 항목 선택
-            val checkedTodo = todayList.find { it.isChecked }
+        binding.btnMoveTimer.setOnClickListener {
+            val adapter =
+                (binding.recShowToDo.adapter as? TodayAdapter) ?: return@setOnClickListener
 
-            checkedTodo?.let { todo ->
-                // TodoList 객체의 인덱스를 찾아 번들로 넘김
-                val todoIndex = todayList.indexOf(todo)
-                val bundle = bundleOf("todoIndex" to todoIndex)
-                findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment, bundle)
-            } ?: run {
+            // 체크된 항목 선택
+            val selectedToDoList = adapter.todayList.firstOrNull { it.isSelected } ?: run {
                 // 체크된 항목이 없으면 토스트 메시지
                 Toast.makeText(context, "체크된 항목이 없습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            findNavController().navigate(
+                R.id.action_timerEntryFragment_to_timerFragment,
+                bundleOf("todo" to selectedToDoList)
+            )
         }
-
-
     }
-
-
-
 
     /*
     Chart
@@ -129,7 +120,17 @@ class TimerEntryFragment : Fragment() {
             setPinchZoom(true) // 확대/축소 가능
 
             // X축 설정
-            xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("월", "화", "수", "목", "금", "토", "일")) // 일~월로 x축 표시되도록 format 변경
+            xAxis.valueFormatter = IndexAxisValueFormatter(
+                arrayOf(
+                    "월",
+                    "화",
+                    "수",
+                    "목",
+                    "금",
+                    "토",
+                    "일"
+                )
+            ) // 일~월로 x축 표시되도록 format 변경
             xAxis.position = XAxis.XAxisPosition.BOTTOM // X축을 밑으로
             xAxis.setDrawGridLines(false) // X축 라인 끔
 
@@ -148,7 +149,7 @@ class TimerEntryFragment : Fragment() {
         val studyCyclesList = weekDays.zip(studyCycles)
 
         for ((index, pair) in studyCyclesList.withIndex()) {
-            entries.add(BarEntry(index.toFloat(), pair.second.toFloat()/2))
+            entries.add(BarEntry(index.toFloat(), pair.second.toFloat() / 2))
         }
 
         val dataSet = BarDataSet(entries, "공부한 시간")
@@ -176,7 +177,6 @@ class TimerEntryFragment : Fragment() {
     /*
     Chart
      */
-
 
 
     private fun getTodayTodoList(todoList: MutableList<TodoList>): MutableList<TodoList> {
@@ -208,14 +208,17 @@ class TimerEntryFragment : Fragment() {
                         viewModel.updateStudyCycles(userId, studyCycles)
                         viewModel.updateDate(userId, todayString)
                     }
+
                     userData.date != todayString -> {
-                        val studyCycles = userData.studyCycles?.toMutableList() ?: MutableList(7) { 0 }
+                        val studyCycles =
+                            userData.studyCycles?.toMutableList() ?: MutableList(7) { 0 }
                         val dateOfUserData = LocalDate.parse(userData.date)
                         studyCycles[dateOfUserData.dayOfWeek.ordinal] = tempCycles
                         viewModel.updateStudyCycles(userId, studyCycles)
                         viewModel.updateTempCycles(userId, 0)
                         viewModel.updateDate(userId, todayString)
                     }
+
                     else -> {
                         // date와 오늘 날짜가 같을 때는 아무 일도 하지 않는다.
                     }
@@ -228,10 +231,8 @@ class TimerEntryFragment : Fragment() {
     //어떤거 destroy할 떄 null로 바꿀지 고민해보기
     override fun onDestroyView() {
         super.onDestroyView()
-        binding=null
+        _binding = null
     }
-
-
 
 
 }
