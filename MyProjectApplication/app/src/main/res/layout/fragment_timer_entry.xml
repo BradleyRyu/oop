@@ -36,7 +36,7 @@
             android:layout_height="249dp"
             android:layout_marginBottom="50dp" />
 
-        <com.github.mikephil.charting.charts.LineChart
+        <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart_week"
             android:layout_width="match_parent"
             android:layout_height="200dp" />

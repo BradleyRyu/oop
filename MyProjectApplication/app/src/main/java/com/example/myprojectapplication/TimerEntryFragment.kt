@@ -17,8 +17,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentTimerEntryBinding
 import com.example.myprojectapplication.viewmodel.TodoViewModel
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -36,7 +40,7 @@ import kotlinx.datetime.*
 class TimerEntryFragment : Fragment() {
 
     var binding:FragmentTimerEntryBinding? = null
-    var chart:LineChart?=null //프라이빗 붙여야 하는지?
+    var chart: BarChart?=null //프라이빗 붙여야 하는지?
 
     val viewModel: TodoViewModel by activityViewModels()
     private var todoList: MutableList<TodoList> = mutableListOf()
@@ -71,32 +75,8 @@ class TimerEntryFragment : Fragment() {
         //chart 관련 함수 호출
         chart = binding?.chartWeek
         setChart()
+        drawChart()
 
-        /*
-        //그냥 어레이로는 입력 안받은 칸 때문에 그래프 일~토 초기화 어려움
-        //아래와 같이 적었는데 대신 해당하는 위치에 안찍히고 이상한 곳에 찎히는 문제 발생 수정하기
-        //배열로 하려면 없는 값 0 채우든 해야할 듯
-        viewModel.observeUser(userId).observe(viewLifecycleOwner) { userData ->
-            // userData가 null이 아니면 투두리스트를 띄우기
-            userData?.let {
-                // 투두리스트를 UI에 띄우는 코드
-                todoList = it.todo.toMutableList()
-                todayList = getTodayTodoList(todoList)
-                binding?.recShowToDo?.adapter = TodayAdapter(todayList)
-
-                val weekDays = listOf("일", "월", "화", "수", "목", "금", "토")
-                val studyCyclesMap = weekDays.associateWith { 0 }.toMutableMap()
-                it.studyCycles.forEach { (day, value) ->
-                    studyCyclesMap[day] = value
-                }
-                val studyCyclesList = studyCyclesMap.entries.map { entry -> Pair(entry.key, entry.value) }
-
-                addChart(studyCyclesList)
-                setData()
-            }
-        }
-
-         */
 
         //리사이클러 뷰 코드
 
@@ -150,7 +130,7 @@ class TimerEntryFragment : Fragment() {
             setPinchZoom(true) // 확대/축소 가능
 
             // X축 설정
-            xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("일", "월", "화", "수", "목", "금", "토")) // 일~월로 x축 표시되도록 format 변경
+            xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("월", "화", "수", "목", "금", "토", "일")) // 일~월로 x축 표시되도록 format 변경
             xAxis.position = XAxis.XAxisPosition.BOTTOM // X축을 밑으로
             xAxis.setDrawGridLines(false) // X축 라인 끔
 
@@ -163,21 +143,31 @@ class TimerEntryFragment : Fragment() {
         }
     }
 
-    private fun addChart(studyCycles: List<Pair<String, Int>>) {
-        val entries = ArrayList<Entry>()
-        val hours = studyCycles.map { it.second.toFloat() }
+    private fun addChart(studyCycles: List<Int>) {
+        val entries = ArrayList<BarEntry>()
+        val weekDays = listOf("월", "화", "수", "목", "금", "토", "일")
+        val studyCyclesList = weekDays.zip(studyCycles)
 
-        //데이터 포인트 차례로 추가
-        for (i in hours.indices) {
-            entries.add(Entry(i.toFloat(), hours[i]))// 각 요일 0~6(실수), 해당하는 시간 add
+        for ((index, pair) in studyCyclesList.withIndex()) {
+            entries.add(BarEntry(index.toFloat(), pair.second.toFloat()/2))
         }
-        val dataSet = LineDataSet(entries, "공부한 시간") // 데이터 셋 생성
-        val lineDataSets: ArrayList<ILineDataSet> = ArrayList()
-        lineDataSets.add(dataSet)
 
-        val lineData = LineData(lineDataSets) // 라인 데이터 생성
-        chart?.data = lineData // 차트에 데이터 설정
+        val dataSet = BarDataSet(entries, "공부한 시간")
+        val barData = BarData(dataSet)
+        chart?.data = barData
     }
+
+    private fun drawChart() {
+        viewModel.observeUser(userId).observe(viewLifecycleOwner) { userData ->
+            // userData가 null이 아니면 투두리스트를 띄우기
+            userData?.let {
+                val studyCycles = it.studyCycles ?: MutableList(7) { 0 }
+                addChart(studyCycles)
+                setData()
+            }
+        }
+    }
+
 
     //차트 데이터 변경할 떄 호출해서 갱신하는 용도
     private fun setData() {
@@ -200,6 +190,7 @@ class TimerEntryFragment : Fragment() {
     //date = 빈문자열일 때 : 오늘 날짜로 date 업데이트, studyCycle 0으로 초기화
     //date != 오늘 : 이미 지난 날인 경우. temp사이클을 studyCycles의 해당 요일에 넣고, date, temp사이클 초기화
     //else : 둘 다 아닐 경우는 없음
+    //월요일: 인덱스0, 일요일 6
     fun updateStudyCycles() {
         val today = Clock.System.todayAt(TimeZone.currentSystemDefault())
         val todayString = today.toString()
