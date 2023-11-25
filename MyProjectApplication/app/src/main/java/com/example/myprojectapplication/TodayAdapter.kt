@@ -3,6 +3,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.databinding.ListTodayBinding
+import com.example.myprojectapplication.viewmodel.TodoViewModel
 
 class TodayAdapter(private val todayList: MutableList<TodoList>) : RecyclerView.Adapter<TodayAdapter.Holder>() {
 
@@ -23,9 +24,12 @@ class TodayAdapter(private val todayList: MutableList<TodoList>) : RecyclerView.
 
         fun bind(today: TodoList) {
             binding.txtToday.text = today.thing_Todo
-            //binding.txtTime.text = today.
             binding.radioTodo.isChecked = today.isChecked
+            val remainingCycles = (today.goalCycle ?: 0) - (today.achievedCycle ?: 0)
+            binding.txtTime.text = remainingCycles.toString()
+
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {

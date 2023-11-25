@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="16dp"
-        android:text="공부한 시간:"
+        android:text="남은 사이클 수"
         android:textColor="#050505"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView3" />

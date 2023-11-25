@@ -30,13 +30,6 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import kotlinx.datetime.*
 
-/* Chart xml code
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/chart_week"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
- */
-
 class TimerEntryFragment : Fragment() {
 
     var binding:FragmentTimerEntryBinding? = null
@@ -66,7 +59,7 @@ class TimerEntryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        updateStudyCycles()
+        updateStudyCycles() //스터디 사이클 업데이트하고 date, tempCycle 초기화
 
         binding?.btnMoveTimer?.setOnClickListener {
             findNavController().navigate(R.id.action_timerEntryFragment_to_timerFragment)
@@ -77,9 +70,6 @@ class TimerEntryFragment : Fragment() {
         setChart()
         drawChart()
 
-
-        //리사이클러 뷰 코드
-
         // ViewModel에서 사용자의 투두리스트 데이터를 관찰
         viewModel.observeUser(userId).observe(viewLifecycleOwner) { userData ->
             // userData가 null이 아니면 투두리스트를 띄우기
@@ -88,6 +78,8 @@ class TimerEntryFragment : Fragment() {
                 todoList = it.todo.toMutableList()
                 todayList = getTodayTodoList(todoList)
                 binding?.recShowToDo?.adapter = TodayAdapter(todayList)
+
+
             }
         }
 
@@ -107,17 +99,14 @@ class TimerEntryFragment : Fragment() {
         }
 
 
-
-
     }
 
 
 
 
-
-
-
-    // 아래로 Chart 설정
+    /*
+    Chart
+     */
     private fun setChart() {
         // 차트 설정 초기화
         chart?.apply {
@@ -168,12 +157,17 @@ class TimerEntryFragment : Fragment() {
         }
     }
 
-
     //차트 데이터 변경할 떄 호출해서 갱신하는 용도
     private fun setData() {
         // 차트 데이터 갱신 함수
         chart?.invalidate() // 차트 데이터 변경 시 호출
     }
+
+    /*
+    Chart
+     */
+
+
 
     private fun getTodayTodoList(todoList: MutableList<TodoList>): MutableList<TodoList> {
         val today = Clock.System.todayAt(TimeZone.currentSystemDefault())
@@ -181,7 +175,8 @@ class TimerEntryFragment : Fragment() {
         return todoList.filter {
             it.year_Todo == today.year &&
                     it.month_Todo == today.monthNumber &&
-                    it.day_Todo == today.dayOfMonth
+                    it.day_Todo == today.dayOfMonth &&
+                    ((it.goalCycle ?: 0) - (it.achievedCycle ?: 0)) > 0 //remain Cycle이 0보다 큰 것만 띄우기
         }.toMutableList()
 
     }
@@ -220,17 +215,7 @@ class TimerEntryFragment : Fragment() {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
+    //어떤거 destroy할 떄 null로 바꿀지 고민해보기
     override fun onDestroyView() {
         super.onDestroyView()
         binding=null
