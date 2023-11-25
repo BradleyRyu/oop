@@ -197,31 +197,38 @@ class TimerEntryFragment : Fragment() {
     }
 
 
-   //업데이트는 되는데 첫번째에만 이상하게 작동함.
-    //처음 만들고 돌리면 temp사이클을 바로 0으로 만들고 study사이클에 넣음
-    //초기화 문제? >> 데이트와 스터디사이클 배열 미리 준비하기
-    //지금보니 무조건 쓰는 문제 발생하는 것 같기도?
-    //처음에는 날짜 없으니까 무조건 들어가는 듯
-    //데이트 널일 때, 널은 아닌데 투데이도 아닐때, 오늘일 때 >> 이렇게 나눠서 각각 초기화, 업데이트, 아무것도안함
-
+    //date = 빈문자열일 때 : 오늘 날짜로 date 업데이트, studyCycle 0으로 초기화
+    //date != 오늘 : 이미 지난 날인 경우. temp사이클을 studyCycles의 해당 요일에 넣고, date, temp사이클 초기화
+    //else : 둘 다 아닐 경우는 없음
     fun updateStudyCycles() {
         val today = Clock.System.todayAt(TimeZone.currentSystemDefault())
         val todayString = today.toString()
 
         viewModel.observeTempCycles(userId).observe(viewLifecycleOwner, Observer { tempCycles ->
             viewModel.observeUser(userId).observe(viewLifecycleOwner) { userData ->
-                userData?.let {
-                    if (it.date != todayString) {
-                        val studyCycles = it.studyCycles?.toMutableList() ?: MutableList(7) { 0 }
-                        studyCycles[today.dayOfWeek.ordinal] = tempCycles
+                when {
+                    userData?.date == "" -> {
+                        val studyCycles = MutableList(7) { 0 }
+                        viewModel.updateStudyCycles(userId, studyCycles)
+                        viewModel.updateDate(userId, todayString)
+                    }
+                    userData.date != todayString -> {
+                        val studyCycles = userData.studyCycles?.toMutableList() ?: MutableList(7) { 0 }
+                        val dateOfUserData = LocalDate.parse(userData.date)
+                        studyCycles[dateOfUserData.dayOfWeek.ordinal] = tempCycles
                         viewModel.updateStudyCycles(userId, studyCycles)
                         viewModel.updateTempCycles(userId, 0)
                         viewModel.updateDate(userId, todayString)
+                    }
+                    else -> {
+                        // date와 오늘 날짜가 같을 때는 아무 일도 하지 않는다.
                     }
                 }
             }
         })
     }
+
+
 
 
 
