@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 addAchievedCycle : 사이클 수행 후 추가함.
 addTempCycles : Temp 사이클 추가함
 
-기존 번들 방식에서 뷰모델로 수정했습니다!
+기존 번들 방식에서 뷰모델로 수정
  */
 class TimerViewModel(private val userId: String, private val _todo: TodoList) : ViewModel() {
     private val db by lazy { Firebase.database }
