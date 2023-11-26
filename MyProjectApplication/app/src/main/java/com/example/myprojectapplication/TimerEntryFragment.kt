@@ -186,7 +186,7 @@ class TimerEntryFragment : Fragment() {
 
     private fun setData() {
         // 차트 데이터 갱신 함수
-        chart?.invalidate() // 차트 데이터 변경 시 호출
+        chart?.invalidate()
     }
     /*
     Chart

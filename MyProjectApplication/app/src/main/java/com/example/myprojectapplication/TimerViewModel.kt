@@ -21,8 +21,15 @@ addTempCycles : Temp 사이클 추가함
 기존 번들 방식에서 뷰모델로 수정
  */
 class TimerViewModel(private val userId: String, private val _todo: TodoList) : ViewModel() {
-    private val db by lazy { Firebase.database }
+    private val db by lazy { Firebase.database } //파이어베이스에서 인스턴스 얻어옴
 
+    /*
+    stateIn :  Flow를 StateFlow로 전환
+    StateFlow가 liveData보다 비동기 작업 유리한 듯?
+    단 초기값 꼭 넣어야함!
+    에러 나면 아래 링크 참고
+    https://developer.android.com/kotlin/flow/stateflow-and-sharedflow?hl=ko
+     */
     private val user = db.reference
         .child("users")
         .child(userId)
@@ -35,7 +42,7 @@ class TimerViewModel(private val userId: String, private val _todo: TodoList) : 
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /*
-     Achieved Cycle +1 증가
+     achievedCycle +1 증가
      @return true: 남은 사이클 없음, false: 남은 사이클 있음
      */
     fun addAchievedCycle(): Boolean {
@@ -47,7 +54,7 @@ class TimerViewModel(private val userId: String, private val _todo: TodoList) : 
 
         val remainCycle = todo.remainCycle
 
-        Log.d("TimerViewModel", "Remain cycle: $remainCycle")
+        Log.d("타이머뷰모델", "$remainCycle")
 
         val reference = db.reference
             .child("users")
@@ -55,7 +62,7 @@ class TimerViewModel(private val userId: String, private val _todo: TodoList) : 
             .child("todo")
             .child(index.toString())
 
-        Log.d("TimerViewModel", reference.toString())
+        Log.d("타이머뷰모델", reference.toString())
 
         reference
             .child("achievedCycle")
@@ -70,7 +77,7 @@ class TimerViewModel(private val userId: String, private val _todo: TodoList) : 
     }
 
     /*
-     Temp Cycle +1 증가
+     tempCycle +1 증가
      */
     fun addTempCycles() {
         db.reference
