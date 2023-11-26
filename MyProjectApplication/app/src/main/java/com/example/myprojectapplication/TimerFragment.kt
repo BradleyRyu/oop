@@ -37,6 +37,8 @@ class TimerFragment : Fragment() {
     프래그먼트 생성시 받은 아규먼츠에서 todo가져오기 때문에 무조건 Todo가 있어야만 하며 없으면 버그
 
     아래 바인딩과 엔트리의 바인딩도 마찬가지
+
+    https://developer.android.com/topic/libraries/view-binding?hl=ko
      */
 
     private var _binding: FragmentTimerBinding? = null
