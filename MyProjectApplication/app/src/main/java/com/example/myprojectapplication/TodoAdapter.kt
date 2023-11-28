@@ -1,5 +1,6 @@
 package com.example.myprojectapplication
 
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,14 +27,22 @@ class TodoAdapter(val todoList: MutableList<TodoList>): RecyclerView.Adapter<Tod
     // bind: 홀더가 몇 번째 아이템이라는 것을 알려줬을 떄 실제로 리스트 요소가 렌더링해주는 역할
     override fun onBindViewHolder(holder: Holder, position: Int) = holder.bind(todoList[position])
 
+
     class Holder(private val binding: ListTodoBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(todolist: TodoList) {
             binding.txtTodo.text = todolist.thing_Todo
             binding.txtDate.text = "${todolist.year_Todo.toString()}년 ${todolist.month_Todo.toString()}월 ${todolist.day_Todo.toString()}일"
             binding.txtGoalCycle.text = todolist.goalCycle.toString()
             binding.txtDoneCycle.text = todolist.achievedCycle.toString()
-        }
 
+            // toString으로 적용 시 색깔이 제대로 반영되지 않는 오류 발견
+            if( (binding.txtDoneCycle.text as String) < (binding.txtGoalCycle.text as String)) {
+                binding.txtDoneCycle.setTextColor(Color.parseColor("red"))
+            } else {
+                binding.txtDoneCycle.setTextColor(Color.parseColor("blue"))
+            }
+
+        }
     }
     fun removeList(position: Int) {
         todoList.removeAt(position)

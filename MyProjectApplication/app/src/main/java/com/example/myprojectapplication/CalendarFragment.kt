@@ -88,6 +88,8 @@ class CalendarFragment : Fragment() {
 
     }
 
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     // 사용자에 ID에 따라 선택한 날짜에 해당하는 TodoList를 출력하는 함수. 앞서 만든 LocatDate 자료구조를 인자로 받음
     private fun displayTodoListForDate(date: LocalDate) {
@@ -115,4 +117,10 @@ class CalendarFragment : Fragment() {
                     it.day_Todo == selectedDate.dayOfMonth
         }.toMutableList()
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
 }

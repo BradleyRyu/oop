@@ -227,4 +227,10 @@ class TodoFragment : Fragment() {
         }
         return true
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
 }
