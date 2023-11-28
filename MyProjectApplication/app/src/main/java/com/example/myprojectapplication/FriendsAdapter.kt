@@ -50,13 +50,13 @@ class FriendslistPopupFragment: DialogFragment() {
             viewModel.currentUserId?.let {
                 val id = it
                 binding?.btnDelete?.setOnClickListener {
-                    Toast.makeText(binding?.root?.context, "$friendId  Delete Friend...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(binding?.root?.context, "${friendId}가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                     friendId?.let { viewModel.deleteFriend(id, it) } // 친구 삭제 함수
                     dismiss()
                 }
 
                 binding?.btnWithfriend?.setOnClickListener {
-                    Toast.makeText(binding?.root?.context, "$friendId  With Friend!!!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(binding?.root?.context, "${friendId}와 함께하기를 시도합니다.", Toast.LENGTH_SHORT).show()
                     dismiss()
                 }
             }

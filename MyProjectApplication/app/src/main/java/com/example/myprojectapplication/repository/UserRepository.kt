@@ -66,7 +66,11 @@ class UserRepository {
         userRef.child(newFriendId).child("state").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val friendState = snapshot.getValue(Boolean::class.java) ?: false
-                val stateString = if (friendState) "ONLINE" else "OFFLINE"
+//                val stateString = if (friendState) "ONLINE" else "OFFLINE"
+                val stateString = when(friendState) {
+                    true -> "ONLINE"
+                    else -> "OFFLINE"
+                }
                 val newFriend = FriendData(newFriendId, stateString)
 
                 userRef.child(id).child("friendsList").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -140,7 +144,9 @@ class UserRepository {
         userRef.child(id).child("friendsList").addListenerForSingleValueEvent( object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 // 친구가 없는 경우 발생하는 오류를 방지하기 위해 emptylist를 반환할 수 있도록 한다.
-                val currentFriendsList = snapshot.getValue<List<FriendData>>() ?: emptyList()
+                val currentFriendsList = snapshot.children.mapNotNull {
+                    it.getValue(FriendData::class.java)
+                }
                 val newFriendsList = currentFriendsList.filter { it.id != deleteId }.toMutableList()
                 userRef.child(id).child("friendsList").setValue(newFriendsList)
             }

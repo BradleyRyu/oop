@@ -27,6 +27,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="3dp"
         android:text="할 일: "
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/txt_when"
         app:layout_constraintStart_toEndOf="@+id/img_list"
         app:layout_constraintTop_toTopOf="parent" />
@@ -38,6 +39,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
         android:text="날짜: "
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/txt_howmany_cycle"
         app:layout_constraintStart_toEndOf="@+id/img_list"
         app:layout_constraintTop_toBottomOf="@+id/txt_thing" />
@@ -49,6 +51,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="3dp"
         android:text="null"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/txt_date"
         app:layout_constraintStart_toEndOf="@+id/txt_thing"
         app:layout_constraintTop_toTopOf="parent" />
@@ -60,6 +63,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
         android:text="null"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/txt_when"
         app:layout_constraintTop_toBottomOf="@+id/txt_todo" />
 
