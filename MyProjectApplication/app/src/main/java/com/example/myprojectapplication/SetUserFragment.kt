@@ -29,7 +29,11 @@ class SetUserFragment : Fragment() {
         viewModel.currentUserId?.let {
 
             viewModel.observeUser(it).observe(viewLifecycleOwner) {user ->
-                binding?.switchState?.isChecked = user.state
+                user?.let {
+                    binding?.switchState?.isChecked = user.state
+                }?: run {
+                    binding?.switchState?.isChecked = false
+                }
             }
             binding?.switchState?.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.changeUserState(it, isChecked)
