@@ -17,8 +17,6 @@ import com.example.myprojectapplication.viewmodel.TodoViewModel
 
 
 class FriendsListFragment : Fragment() {
-    // 서버를 이용해서 친구들의 상태를 확인할 수 있어야 한다. -> 서버에 데이터를 어떻게 저장해야할까?
-
     var binding: FragmentFriendsListBinding? = null
     val viewModel: TodoViewModel by activityViewModels()
 
