@@ -12,7 +12,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
 data class UserDataClass(
-    //val id: String = "",
     var todo: MutableList<TodoList> = mutableListOf(),
     var time: Int = 0,
     var state: Boolean = false,
@@ -31,12 +30,8 @@ class TodoViewModel : ViewModel() {
     private val _friendsLiveData = MutableLiveData<List<FriendData>>()
     val friendsLiveData: LiveData<List<FriendData>> get() = _friendsLiveData
 
-    private val _friendStateLiveData = MutableLiveData<String>()
-    val friendStateLiveData: LiveData<String> get() = _friendStateLiveData
-
 
     var currentUserId: String? = null
-    var tempCycle: Int = 0
 
     fun observeFriendsList(id: String): LiveData<List<FriendData>> {
         // 조건
@@ -69,14 +64,6 @@ class TodoViewModel : ViewModel() {
         todoRepository.deleteFriend(id, deleteId)
     }
 
-    fun updateTimeTodo(id: String, thing_Todo: String, newTime: Int) {
-        todoRepository.updateTimeTodo(id, thing_Todo, newTime)
-    }
-
-    fun getTimeTodo(id: String, thing_Todo: String): LiveData<Int?> {
-        return todoRepository.getTimeTodo(id, thing_Todo)
-    }
-
     fun updateTempCycles(id: String, studyTime: Int) {
         todoRepository.updateTempCycles(id, studyTime)
     }
@@ -85,26 +72,8 @@ class TodoViewModel : ViewModel() {
         todoRepository.updateStudyCycles(id, studyCycles)
     }
 
-    //템프사이클 관찰
-    fun observeTempForUpdate(id: String): LiveData<UserDataClass> {
-        todoRepository.observeUser(id, _userLiveData)
-        todoRepository.getTempCycles(id).observeForever { tempCycle ->
-            this.tempCycle = tempCycle
-        }
-        return userLiveData
-    }
-
     fun checkUserExist(id: String): LiveData<Boolean> {
         return todoRepository.checkUserExist(id)
-    }
-
-    fun observeFriendState(id: String, friendId: String): LiveData<String> {
-        todoRepository.observeFriendState(id, friendId, _friendStateLiveData)
-        return friendStateLiveData
-    }
-
-    fun observeUserState(id: String):Boolean {
-        return true
     }
 
     fun updateDate(id: String, date: String) {
@@ -120,8 +89,8 @@ class TodoViewModel : ViewModel() {
         todoRepository.changeUserState(id, state)
     }
 
-    fun getUserState(id: String): Boolean {
-        return todoRepository.getUserState(id) as Boolean
+    fun updateFriendsList(id: String) {
+        todoRepository.updateFriendsList(id)
     }
 
 }

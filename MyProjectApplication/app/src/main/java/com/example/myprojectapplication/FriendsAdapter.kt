@@ -25,7 +25,7 @@ class FriendslistPopupFragment: DialogFragment() {
     var binding: FriendslistPopupBinding? = null
     val viewModel: TodoViewModel by activityViewModels()
 
-    // 팝업창 사이즈 조절
+    // 팝업창을 띄우기 위한 일종의 루틴
     override fun onStart() {
         super.onStart()
 
@@ -37,16 +37,18 @@ class FriendslistPopupFragment: DialogFragment() {
         }
     }
 
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
         val inflater = requireActivity().layoutInflater
-        binding = FriendslistPopupBinding.inflate(inflater)
+        binding = FriendslistPopupBinding.inflate(inflater) // 팝업창을 바인딩한다.
 
         val bundle = this.arguments  // arguments를 통해 번들을 가져옴
         val friendId = bundle?.getString("id")
 
+        // let을 통해 번들을 통해 받아온 친구리스트 중 친구의 아이디를 it으로 사용
         friendId.let {
-            binding?.popupTitle?.text = it
+            binding?.popupTitle?.text = it // 팝업창의 타이틀을 friendId로 설정
             viewModel.currentUserId?.let {
                 val id = it
                 binding?.btnDelete?.setOnClickListener {
@@ -55,16 +57,12 @@ class FriendslistPopupFragment: DialogFragment() {
                     dismiss()
                 }
 
+                // 같이하기 버튼을 누른 경우 토스트를 띄운다.
                 binding?.btnWithfriend?.setOnClickListener {
                     Toast.makeText(binding?.root?.context, "${friendId}와 함께하기를 시도합니다.", Toast.LENGTH_SHORT).show()
-                    dismiss()
+                    dismiss() // 토스트를 띄운 후 팝업창을 닫기 위한 함수
                 }
             }
-        }
-
-        binding?.btnWithfriend?.setOnClickListener {
-            Toast.makeText(binding?.root?.context, "$friendId  With Friend!!!", Toast.LENGTH_SHORT).show()
-            dismiss()
         }
 
         builder.setView(binding?.root)
@@ -85,32 +83,29 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
 
     class Holder(private val binding: FriendsListUnitBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(friendData: FriendData) {
-            val viewModel = TodoViewModel()
-            binding.txtId.text = friendData.id
+            val friendId = friendData.id
+            val friendState = friendData.state
 
-            viewModel.currentUserId?.let {
-                viewModel.observeFriendState(it, friendData.id).observeForever {}
-            }
+            binding.txtId.text = friendId
+            binding.txtState.text = friendState
 
             binding.root.setOnClickListener {// 토스트 하기 위한 코드
-                Toast.makeText(binding.root.context, "ID : ${friendData.id} State : ${friendData.state}",
+                Toast.makeText(binding.root.context, "ID : $friendId State : $friendState",
                     Toast.LENGTH_SHORT).show()
             }
 
-            binding.btnPopupFriends.setImageResource( when ( friendData.state ) {
+            binding.btnPopupFriends.setImageResource( when ( friendState ) {
                 "ONLINE" -> R.drawable.online
                 "OFFLINE" -> R.drawable.offline
                 else -> R.drawable.user
             })
 
-            binding.txtState.text = friendData.state
-
             binding.btnPopupFriends.setOnClickListener {
                 val bundle = Bundle()
-                bundle.putString("id", friendData.id)
+                bundle.putString("id", friendId)
                 val friendPopupWindow = FriendslistPopupFragment()
                 friendPopupWindow.arguments = bundle
-                friendPopupWindow.show((it.context as AppCompatActivity).supportFragmentManager, "FriendslistPopupFragment")
+                friendPopupWindow.show((it.context as AppCompatActivity).supportFragmentManager, "FriendsListPopupFragment")
             }
         }
     }

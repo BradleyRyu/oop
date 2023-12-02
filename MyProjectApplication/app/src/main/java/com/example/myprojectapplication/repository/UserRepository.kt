@@ -29,6 +29,7 @@ class UserRepository {
         userRef.child(id).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(UserDataClass::class.java)
+                user?.state = snapshot.child("state").getValue(Boolean::class.java) ?: false
                 userLiveData.postValue(user)
             }
 
@@ -53,23 +54,10 @@ class UserRepository {
         })
     }
 
-    fun observeFriendState(id: String, friendId: String, stateLiveData: MutableLiveData<String>) {
-        userRef.child(friendId).child("state").addValueEventListener( object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val state = snapshot.getValue(Boolean::class.java)?:false
-                stateLiveData.postValue(state.toString())
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
-    }
     fun addNewFriends(id: String, newFriendId: String) {
         userRef.child(newFriendId).child("state").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val friendState = snapshot.getValue(Boolean::class.java) ?: false
-//                val stateString = if (friendState) "ONLINE" else "OFFLINE"
                 val stateString = when(friendState) {
                     true -> "ONLINE"
                     else -> "OFFLINE"
@@ -99,21 +87,6 @@ class UserRepository {
         })
     }
 
-
-//    fun addTodoItem(id: String, newItem: TodoList) {
-//        userRef.child(id).child("todo").addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val currentTodoList = snapshot.getValue<List<TodoList>>() ?: emptyList()
-//                val updatedTodoList = currentTodoList.toMutableList()
-//                updatedTodoList.add(newItem)
-//                userRef.child(id).child("todo").setValue(updatedTodoList)
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                // 에러 처리
-//            }
-//        })
-//    }
     fun updateTodoItem(id: String, updatedTodoList: MutableList<TodoList>) {
         userRef.child(id).child("todo").setValue(updatedTodoList)
     }
@@ -138,10 +111,6 @@ class UserRepository {
         })
     }
 
-    fun updateTime(id: String, newTime: Int) {
-        userRef.child(id).child("time").setValue(newTime)
-    }
-
 
     fun deleteFriend(id: String, deleteId: String) {
         userRef.child(id).child("friendsList").addListenerForSingleValueEvent( object: ValueEventListener {
@@ -160,65 +129,12 @@ class UserRepository {
         })
     }
 
-    fun updateTimeTodo(id: String, thing_Todo: String, newTimeTodo: Int) {
-        val todoListRef = userRef.child(id).child("todo")
-        todoListRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (childSnapshot in snapshot.children) {
-                    val todoItem = childSnapshot.getValue(TodoList::class.java)
-                    Log.d("Firebase", "Retrieved todoItem: $todoItem")
-                    if (todoItem?.thing_Todo == thing_Todo) {
-                        val todoItemRef = todoListRef.child(childSnapshot.key!!)
-                        val updateMap = mapOf<String, Any>("achievedCycle" to newTimeTodo)
-                        todoItemRef.updateChildren(updateMap)
-                        break
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("Firebase", "아 외않돼냐고")
-            }
-        })
-    }
-
-    fun getTimeTodo(id: String, thing_Todo: String): LiveData<Int?> {
-        val timeTodoLiveData = MutableLiveData<Int?>()
-        val todoListRef = userRef.child(id).child("todo")
-        todoListRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (childSnapshot in snapshot.children) {
-                    val todoItem = childSnapshot.getValue(TodoList::class.java)
-                    if (todoItem?.thing_Todo == thing_Todo) {
-                        timeTodoLiveData.postValue(todoItem?.achievedCycle)
-                        break
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("Firebase", "아 외않돼냐고")
-            }
-        })
-        return timeTodoLiveData
-    }
-
-
     fun updateTempCycles(id: String, studyTime: Int) {
         userRef.child(id).child("tempCycles").setValue(studyTime)
     }
 
     fun updateStudyCycles(id: String, studyCycles: List<Int>) {
         userRef.child(id).child("studyCycles").setValue(studyCycles)
-    }
-
-
-    fun getTempCycles(id: String): LiveData<Int> {
-        val tempCyclesLiveData = MutableLiveData<Int>()
-        userRef.child(id ).child("tempCycles").get().addOnSuccessListener {
-            tempCyclesLiveData.value = it.getValue(Int::class.java) ?: 0
-        }
-        return tempCyclesLiveData
     }
 
     fun checkUserExist(id: String): LiveData<Boolean> {
@@ -244,22 +160,6 @@ class UserRepository {
         userRef.child(id).child("date").setValue(date)
     }
 
-
-    /*
-    fun observeTempCycles(id: String): LiveData<Int> {
-        val tempCycles = MutableLiveData<Int>()
-        userRef.child(id).child("tempCycles").addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                tempCycles.value = dataSnapshot.value.toString().toInt()
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle error here
-            }
-        })
-        return tempCycles
-    }
-     */
     fun observeTempCycles(userId: String): LiveData<Int> {
         val tempCyclesLiveData = MutableLiveData<Int>()
         database.getReference("users/$userId/tempCycles").addValueEventListener(object :
@@ -279,17 +179,30 @@ class UserRepository {
     }
 
 
-    fun getUserState(id: String): MutableLiveData<Boolean> {
-        val state = MutableLiveData<Boolean>()
-        userRef.child(id).addListenerForSingleValueEvent( object : ValueEventListener {
+    fun updateFriendsList(id: String) {
+        userRef.child(id).child("friendsList").addValueEventListener( object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                state.value = snapshot.value as Boolean
+                val friendsList = snapshot.children.mapNotNull {
+                    it.getValue(FriendData::class.java)
+                }.toMutableList()
+
+                friendsList.forEach { friend ->
+                    userRef.child(friend.id).child("state").addValueEventListener( object: ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            val friendState = snapshot.getValue(Boolean::class.java) ?: false
+                            friend.state = if (friendState) "ONLINE" else "OFFLINE"
+                            userRef.child(id).child("friendsList").setValue(friendsList)
+                        }
+                        override fun onCancelled(error: DatabaseError) {
+                            // 에러 처리
+                        }
+                    })
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // 에러 처리
+                TODO("Not yet implemented")
             }
         })
-        return state
     }
 }

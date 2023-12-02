@@ -44,7 +44,7 @@ class SetUserFragment : Fragment() {
             val userId = it
             viewModel.observeUser(userId).observe(viewLifecycleOwner) {user ->
                 user?.let {
-                    binding?.switchState?.isChecked = user.state
+                    binding?.switchState?.isChecked = user.state as Boolean
                 }?: run {
                     binding?.switchState?.isChecked = false
                 }

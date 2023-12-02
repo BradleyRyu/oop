@@ -33,6 +33,7 @@ class FriendsListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val friendsAdapter = FriendsAdapter(mutableListOf())
         viewModel.currentUserId?.let {
+            viewModel.updateFriendsList(it)
             viewModel.observeFriendsList(it).observe(viewLifecycleOwner, Observer {friendsList ->
                 friendsAdapter.friendsList = friendsList.toMutableList()
                 friendsAdapter.notifyDataSetChanged()
