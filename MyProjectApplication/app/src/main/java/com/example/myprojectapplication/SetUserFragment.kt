@@ -24,11 +24,25 @@ class SetUserFragment : Fragment() {
         return binding?.root
     }
 
+    private fun check(userId: String, newFriend: String) {
+        viewModel.checkUserExist(newFriend).observe(viewLifecycleOwner) { exist ->
+            when ( exist ) {
+                true -> {
+                    viewModel.addNewFriends(userId, newFriend)
+                    Toast.makeText(binding?.root?.context, "${newFriend}가 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+                else -> Toast.makeText(binding?.root?.context, "${newFriend}는 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        binding?.txtNewfriends?.text = null
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.currentUserId?.let {
-
-            viewModel.observeUser(it).observe(viewLifecycleOwner) {user ->
+        viewModel.currentUserId?.let { // 현재 접속한 아이디가 null이 아닌 경우에만 실행
+            val userId = it
+            viewModel.observeUser(userId).observe(viewLifecycleOwner) {user ->
                 user?.let {
                     binding?.switchState?.isChecked = user.state
                 }?: run {
@@ -36,32 +50,16 @@ class SetUserFragment : Fragment() {
                 }
             }
             binding?.switchState?.setOnCheckedChangeListener { _, isChecked ->
-                viewModel.changeUserState(it, isChecked)
+                viewModel.changeUserState(userId, isChecked)
             }
-        }
 
-        binding?.btnFindFriendsId?.setOnClickListener {
-            viewModel.currentUserId?.let {
-                val userId = it
+            binding?.btnFindFriendsId?.setOnClickListener {
                 when ( val newFriend = binding?.txtNewfriends?.text.toString() ) {
                     userId -> {
                         Toast.makeText(binding?.root?.context, "자신의 이름은 추가할 수 없습니다.", Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
-                    else -> {
-                        viewModel.observeFriendState(userId, newFriend).observe(viewLifecycleOwner) { _ ->
-                            viewModel.checkUserExist(newFriend).observe(viewLifecycleOwner) { exist ->
-                                when ( exist ) {
-                                    true -> {
-                                        viewModel.addNewFriends(userId, newFriend)
-                                        Toast.makeText(binding?.root?.context, "${newFriend}가 추가되었습니다.", Toast.LENGTH_SHORT).show()
-                                    }
-                                    else -> Toast.makeText(binding?.root?.context, "${newFriend}는 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                        binding?.txtNewfriends?.text = null
-                    }
+                    else -> check(userId, newFriend)
                 }
             }
         }

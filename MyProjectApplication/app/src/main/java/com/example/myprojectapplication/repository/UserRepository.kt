@@ -1,6 +1,7 @@
 package com.example.myprojectapplication.repository
 
 import android.util.Log
+import android.util.MutableBoolean
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myprojectapplication.FriendData
@@ -10,7 +11,9 @@ import com.example.myprojectapplication.viewmodel.UserDataClass
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.MutableData
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.getValue
 
 class UserRepository {
@@ -97,20 +100,20 @@ class UserRepository {
     }
 
 
-    fun addTodoItem(id: String, newItem: TodoList) {
-        userRef.child(id).child("todo").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val currentTodoList = snapshot.getValue<List<TodoList>>() ?: emptyList()
-                val updatedTodoList = currentTodoList.toMutableList()
-                updatedTodoList.add(newItem)
-                userRef.child(id).child("todo").setValue(updatedTodoList)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // 에러 처리
-            }
-        })
-    }
+//    fun addTodoItem(id: String, newItem: TodoList) {
+//        userRef.child(id).child("todo").addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val currentTodoList = snapshot.getValue<List<TodoList>>() ?: emptyList()
+//                val updatedTodoList = currentTodoList.toMutableList()
+//                updatedTodoList.add(newItem)
+//                userRef.child(id).child("todo").setValue(updatedTodoList)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // 에러 처리
+//            }
+//        })
+//    }
     fun updateTodoItem(id: String, updatedTodoList: MutableList<TodoList>) {
         userRef.child(id).child("todo").setValue(updatedTodoList)
     }
@@ -178,7 +181,6 @@ class UserRepository {
             }
         })
     }
-
 
     fun getTimeTodo(id: String, thing_Todo: String): LiveData<Int?> {
         val timeTodoLiveData = MutableLiveData<Int?>()
@@ -274,5 +276,20 @@ class UserRepository {
             }
         })
         return tempCyclesLiveData
+    }
+
+
+    fun getUserState(id: String): MutableLiveData<Boolean> {
+        val state = MutableLiveData<Boolean>()
+        userRef.child(id).addListenerForSingleValueEvent( object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                state.value = snapshot.value as Boolean
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // 에러 처리
+            }
+        })
+        return state
     }
 }

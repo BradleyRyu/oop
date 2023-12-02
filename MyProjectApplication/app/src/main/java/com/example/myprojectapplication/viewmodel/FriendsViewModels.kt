@@ -7,6 +7,9 @@ import com.example.myprojectapplication.FriendData
 import com.example.myprojectapplication.FriendsList
 import com.example.myprojectapplication.TodoList
 import com.example.myprojectapplication.repository.UserRepository
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 data class UserDataClass(
     //val id: String = "",
@@ -117,6 +120,8 @@ class TodoViewModel : ViewModel() {
         todoRepository.changeUserState(id, state)
     }
 
-
+    fun getUserState(id: String): Boolean {
+        return todoRepository.getUserState(id) as Boolean
+    }
 
 }
