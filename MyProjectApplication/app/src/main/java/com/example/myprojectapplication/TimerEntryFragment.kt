@@ -27,8 +27,14 @@ import kotlinx.datetime.*
 class TimerEntryFragment : Fragment() {
 
     //바인딩, 뷰모델 등 변수 선언
+    /*
+    https://developer.android.com/topic/libraries/view-binding?hl=ko
+    binding은 get()을 통해서 _binding이 널이 아닌 경우에만 접근할 수 있도록 : 델리게이트
+        값을 가져오는 동작을 _binding에게 위임하는 형식
+        만약 _binding이 null일 경우, nullpointexception으로 뷰가 파괴된 상태에서 접근하는 것 방지
+     */
     private var _binding: FragmentTimerEntryBinding? = null
-    private val binding get() = _binding!! //https://developer.android.com/topic/libraries/view-binding?hl=ko
+    private val binding get() = _binding!!
     private val viewModel: TodoViewModel by activityViewModels()
     private var todoList: MutableList<TodoList> = mutableListOf()
 

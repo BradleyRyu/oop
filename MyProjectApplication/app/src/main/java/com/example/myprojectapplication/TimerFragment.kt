@@ -22,11 +22,13 @@ To DO
 
 /*
 !!(널 아님 단언)
-todo는 _todo를 강제로 언래핑
+todo는 _todo를 언래핑
 _todo가 무조건 Null이 아니라는 조건
 프래그먼트 생성시 받은 아규먼츠에서 todo가져오기 때문에 무조건 Todo가 있어야만 하며 없으면 버그
 아래 바인딩과 TimerEntryFragment의 바인딩도 마찬가지
 https://developer.android.com/topic/libraries/view-binding?hl=ko
+
+binding은 get()을 통해서 _binding이 널이 아닌 경우에만 접근할 수 있도록 : 델리게이트
  */
 
 class TimerFragment : Fragment() {
@@ -56,11 +58,11 @@ class TimerFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _todo = arguments?.getParcelable("todo")
+        _todo = arguments?.getParcelable("todo") //이전 프래그먼트에서 전달한 데이터 사용
         if (savedInstanceState != null) {
-            _todo = savedInstanceState.getParcelable("todo")
+            _todo = savedInstanceState.getParcelable("todo") //화면전환 등 사라진 내용 복원
         }
-        assert(_todo != null)
+        //assert(_todo != null) //개발 과정에서 _todo null이 아닌지 확인용
     }
 
     //화면 전환 등으로 사라지는 내용 복원
@@ -79,6 +81,8 @@ class TimerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //타이머 뷰모델 팩토리 패턴으로 작성
         timerViewModel = ViewModelProvider(
             this,
             TimerViewModelFactory(userId, todo)
