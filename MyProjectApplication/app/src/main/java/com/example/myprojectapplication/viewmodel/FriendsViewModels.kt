@@ -34,7 +34,6 @@ class TodoViewModel : ViewModel() {
     var currentUserId: String? = null
 
     fun observeFriendsList(id: String): LiveData<List<FriendData>> {
-        // 조건
         todoRepository.observeFriendsList(id, _friendsLiveData)
         return friendsLiveData
     }

@@ -18,7 +18,7 @@ import com.example.myprojectapplication.viewmodel.TodoViewModel
 
 class FriendsListFragment : Fragment() {
     var binding: FragmentFriendsListBinding? = null
-    val viewModel: TodoViewModel by activityViewModels()
+    private val viewModel: TodoViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,14 +32,14 @@ class FriendsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val friendsAdapter = FriendsAdapter(mutableListOf())
-        viewModel.currentUserId?.let {
-            viewModel.updateFriendsList(it)
+        viewModel.currentUserId?.let { // 사용자가 유효한 경우에만 실행
+            viewModel.updateFriendsList(it) // 자신의 친구상태를 업데이트하는 메서드
             viewModel.observeFriendsList(it).observe(viewLifecycleOwner, Observer {friendsList ->
                 friendsAdapter.friendsList = friendsList.toMutableList()
-                friendsAdapter.notifyDataSetChanged()
+                friendsAdapter.notifyDataSetChanged() // 아답터에게 업데이트된 내용을 전달하기 위한 루틴
             })
         }
-        binding?.recFriends?.adapter = friendsAdapter
+        binding?.recFriends?.adapter = friendsAdapter // 아답터 루틴
         binding?.recFriends?.layoutManager = LinearLayoutManager(context)
     }
 }

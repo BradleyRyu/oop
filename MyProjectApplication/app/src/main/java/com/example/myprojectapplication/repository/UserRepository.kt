@@ -45,7 +45,7 @@ class UserRepository {
                 val friendsList = snapshot.children.mapNotNull {
                     it.getValue(FriendData::class.java)
                 }
-                friendsLiveData.postValue(friendsList)
+                friendsLiveData.postValue(friendsList) // 친구리스트를 얻어온다.
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -57,11 +57,12 @@ class UserRepository {
     fun addNewFriends(id: String, newFriendId: String) {
         userRef.child(newFriendId).child("state").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val friendState = snapshot.getValue(Boolean::class.java) ?: false
-                val stateString = when(friendState) {
+//                val friendState = snapshot.getValue(Boolean::class.java) ?: false
+                val stateString = when( snapshot.getValue(Boolean::class.java) ?: false ) {
                     true -> "ONLINE"
                     else -> "OFFLINE"
                 }
+
                 val newFriend = FriendData(newFriendId, stateString)
 
                 userRef.child(id).child("friendsList").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -69,6 +70,7 @@ class UserRepository {
                         val friendsList = snapshot.children.mapNotNull {
                             it.getValue(FriendData::class.java)
                         }
+                        // 어떠한 친구와도 곂치지 않을 때 친구를 추가
                         if (!friendsList.any { it.id == newFriendId }) {
                             val newFriendsList = friendsList.toMutableList() + newFriend
                             userRef.child(id).child("friendsList").setValue(newFriendsList)
@@ -138,7 +140,7 @@ class UserRepository {
     }
 
     fun checkUserExist(id: String): LiveData<Boolean> {
-        val exist = MutableLiveData<Boolean>()
+        val exist = MutableLiveData<Boolean>() // 친구 상태가 존재하는지 확인하기 위해
         userRef.child(id).addListenerForSingleValueEvent( object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 exist.postValue(snapshot.exists())
@@ -153,7 +155,7 @@ class UserRepository {
 
 
     fun changeUserState(id: String, state: Boolean) {
-        userRef.child(id).child("state").setValue(state)
+        userRef.child(id).child("state").setValue(state) // 스위치에 의한 사용자의 상태 변화 설정
     }
 
     fun updateDate(id: String, date: String) {
@@ -184,10 +186,12 @@ class UserRepository {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val friendsList = snapshot.children.mapNotNull {
                     it.getValue(FriendData::class.java)
-                }.toMutableList()
+                }.toMutableList() // 친구의 리스트는 업데이트로 인하여 변경될 수 있다.
 
+                // 친구리스트의 각각에 대한 람다함수를 사용
                 friendsList.forEach { friend ->
                     userRef.child(friend.id).child("state").addValueEventListener( object: ValueEventListener {
+                        // 루틴을 통해 친구의 상태에 따른 업데이트를 진행한다.
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val friendState = snapshot.getValue(Boolean::class.java) ?: false
                             friend.state = if (friendState) "ONLINE" else "OFFLINE"

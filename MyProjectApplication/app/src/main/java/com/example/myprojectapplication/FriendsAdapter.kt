@@ -76,7 +76,7 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
         return Holder(binding)
     }
 
-    override fun onBindViewHolder(holder: Holder, position: Int) = holder.bind(friendsList[position])
+    override fun onBindViewHolder(holder: Holder, position: Int) = holder.bind(friendsList[position]) // 이 때의 친구리스트는 업데이트 된 친구리스트이다.
 
     override fun getItemCount(): Int = friendsList.size
 
@@ -100,11 +100,12 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
                 else -> R.drawable.user
             })
 
+            // 이미지를 누를 경우 팝업창을 띄운다.
             binding.btnPopupFriends.setOnClickListener {
                 val bundle = Bundle()
                 bundle.putString("id", friendId)
                 val friendPopupWindow = FriendslistPopupFragment()
-                friendPopupWindow.arguments = bundle
+                friendPopupWindow.arguments = bundle // 팝업창에 들어갈 내용을 전달하기 위해 번들로 전달
                 friendPopupWindow.show((it.context as AppCompatActivity).supportFragmentManager, "FriendsListPopupFragment")
             }
         }
