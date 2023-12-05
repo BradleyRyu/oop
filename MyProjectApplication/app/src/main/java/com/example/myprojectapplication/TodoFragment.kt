@@ -187,6 +187,9 @@ class TodoFragment : Fragment() {
             // 정렬된 리스트를 firebase에 업데이트
             viewModel.updateTodoItem(id, todoList)
 
+            // 추가된 경우 토스트 메세지를 띄움
+            floatingToast("추가되었습니다.")
+
             // true값을 return하여 리스트에 추가를 허가함
             true
 
@@ -212,29 +215,35 @@ class TodoFragment : Fragment() {
         // 오늘의 날짜를 저장하는 변수를 선언함 (이후 사용자가 오늘 이전의 날짜를 입력했을 경우, 비교를 위한 대비)
         val currentDate: LocalDate = LocalDate.now()
 
-        // 사용자가 기입한 날짜를 LocalDate 객체의 변수로 생성하여 비교를 용이하게 함
-        // 또한 넘어오는 값이 nullable한 객체들이기 때문에, null로 넘어올 시 0으로 값을 저장하도록 세탕힘
+        // 사용자가 기입한 날짜를 LocalDate 변수로 생성하여 비교를 용이하게 함
+        // 또한 넘어오는 값이 nullable한 객체들이기 때문에, null로 넘어올 시 현재 날짜로 값을 저장하도록 세탕함
         val inputDate: LocalDate = try {
+
             // 넘어온 year, month, day값이 null 이라면 오늘 날짜로 설정함.
             LocalDate.of(year ?: currentDate.year, month ?: currentDate.monthValue, day ?: currentDate.dayOfMonth)
+
         } catch (e: DateTimeException) {
+
+            // DateTimeException -> 유효한 날짜 값이 아닐 경우의 에러
             // 사용자가 입력한 값이 날짜의 형식에 맞지 않을 경우 예외처리함.
             floatingToast("유효한 날짜 값이 아닙니다.\n다시 확인해주세요.")
-
-            // 예외가 뜨지 않도록 오늘 날짜로 설정하고
-            LocalDate.now()
 
             // false값을 반환해 TodoList에 추가하지 않음
             return false
         }
 
-        // 오늘 날짜 이전의 값이 입력되었다면 추가할 수 없도록 함
+        // 오늘 날짜 이전의 값이 입력되었다면
         if( inputDate < currentDate ) {
             floatingToast("오늘 이전의 날짜는 입력할 수 없습니다. \n다시 입력해주세요.")
-            return false
 
-            // 입력한 날짜가 오늘 날짜를 포함한 이후이면
-        } else {
+            //false값을 반환하여 리스트에 추가할 수 없도록 함
+            return false
+        }
+        return true
+
+        // 입력한 날짜가 오늘 날짜를 포함한 이후이면
+        // else {
+            /*
             return when {
                 // 각 날짜의 입력값이 null이 아니라면
                 (year != null) && (month != null) && (day != null)  -> {
@@ -260,7 +269,9 @@ class TodoFragment : Fragment() {
                     false
                 }
             }
-        }
+            */
+            //return true
+        //}
     }
 
     // 무엇을 할지, 언제 할지에 대한 값이 빈 문자열이거나 null이라면 잘못된 입력에 대한 toast를 띄움
