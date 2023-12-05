@@ -55,10 +55,14 @@ class TodoFragment : Fragment() {
 
             // 스와이프 시 해당 아이템 삭제하는 함수
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
                 // 현재 viewholder의 어댑터 위치를 가져옴
                 val position = viewHolder.adapterPosition
+
                 // 만약 recTodo의 어댑터가 TodoAdapter의 인스턴스(메모리에 올라간 객체)라면, TodoAdapter의 removeList를 사용해 해당 위치의 아이템을 제거함.
                 (binding?.recTodo?.adapter as? TodoAdapter)?.removeList(position)
+
+                //viewModel에게 아이템이 해당 위치의 아이템이 제거되었다는 것을 알려줌
                 viewModel.removeTodoItem(id, position)
                 floatingToast("삭제되었습니다.")
             }
@@ -79,7 +83,7 @@ class TodoFragment : Fragment() {
         binding = FragmentTodoBinding.inflate(inflater, container, false)
 
         // layoutmanager: 리사이클러뷰에 어떻게 아이템을 쌓을 것인가, 어떤 형식으로 보여줄 것이냐
-        // LinearLayout으로 투두리스트 리사이클러뷰를 보여줌
+        // LinearLayout으로 TodoList Recyclerview를 보여줌
         binding?.recTodo?.layoutManager = LinearLayoutManager(context)
 
         // ItemTouchHelper를 RecyclerView에 연결 ( 스와이프를 통한 리스트 삭제를 위함 )
@@ -100,6 +104,7 @@ class TodoFragment : Fragment() {
         val goalCycle = listOf("목표 사이클 수를 설정하세요.", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
 
         // 스피너의 어댑터 설정
+        // context가 null일 경우도 있기 때문에, let 함수를 사용하여 널 안정성 확보
         val spinnerAdapter =
             binding?.root?.context?.let {
                 ArrayAdapter(it, android.R.layout.simple_list_item_1, goalCycle)
@@ -174,6 +179,7 @@ class TodoFragment : Fragment() {
     ): Boolean {
         return if( isValidDate(whentodo_year, whentodo_month, whentodo_day) ) {
             todoList.add(TodoList(whattodo, whentodo_year, whentodo_month, whentodo_day, goalCycle, achievedCycle))
+
             // 입력된 리스트를 포함하여 다시 todo리스트 정렬하고
             todoList = sortTodoList(todoList)
 
@@ -215,13 +221,12 @@ class TodoFragment : Fragment() {
         // 오늘의 날짜를 저장하는 변수를 선언함 (이후 사용자가 오늘 이전의 날짜를 입력했을 경우, 비교를 위한 대비)
         val currentDate: LocalDate = LocalDate.now()
 
-        // 사용자가 기입한 날짜를 LocalDate 변수로 생성하여 비교를 용이하게 함
+        // 사용자가 기입한 날짜를 LocalDate 변수로 생성하여 비교 및 예외처리를 용이하게 함
         // 또한 넘어오는 값이 nullable한 객체들이기 때문에, null로 넘어올 시 현재 날짜로 값을 저장하도록 세탕함
         val inputDate: LocalDate = try {
 
             // 넘어온 year, month, day값이 null 이라면 오늘 날짜로 설정함.
             LocalDate.of(year ?: currentDate.year, month ?: currentDate.monthValue, day ?: currentDate.dayOfMonth)
-
         } catch ( e: DateTimeException ) {
 
             // DateTimeException -> 유효한 날짜 값이 아닐 경우의 에러
@@ -232,6 +237,7 @@ class TodoFragment : Fragment() {
             return false
         }
 
+        // 오늘 이전 및 지금부터 3년 이후의 값이 입력되었을 경우의 예외처리
         when {
             // 오늘 날짜 이전의 값이 입력되었다면
             inputDate < currentDate -> {

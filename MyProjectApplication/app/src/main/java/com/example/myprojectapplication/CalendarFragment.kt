@@ -89,14 +89,20 @@ class CalendarFragment : Fragment() {
     // 사용자에 ID에 따라 선택한 날짜에 해당하는 TodoList를 출력하는 함수. 앞서 만든 LocatDate 자료구조를 인자로 받음
     private fun displayTodoListForDate(date: LocalDate) {
         viewModel.observeUser(id).observe(viewLifecycleOwner) { userID ->
+
             //viewModel이 user의 id를 관찰한 결과, 널이 아닐 시 실행
             userID?.let {
+
                 // user의 TodoList를 MutableList로 받아와서
                 val todoList = it.todo.toMutableList()
+
                 // 선택한 날짜에 해당하는 TodoList만 걸러 가져온 뒤
                 val todoListOnSelectedDay = getTodoListForDate(todoList, date)
+
                 // TodoAdapter의 재사용으로 선택된 날의 TodoList를 어댑터에 넣어줌
                 val todoAdapter = TodoAdapter(todoListOnSelectedDay)
+
+                // 어댑터 연결
                 binding?.recTodoOfTheDay?.adapter = todoAdapter
             }
         }
@@ -105,7 +111,8 @@ class CalendarFragment : Fragment() {
     // 선택한 날짜에 해당하는 TodoList를 반환하는 함수
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getTodoListForDate(todoList: MutableList<TodoList>, selectedDate: LocalDate): MutableList<TodoList> {
-        // 인자로 받은 TodoList를 선택한 연 월 일이 같은 경우로 필터링하여 MutableList로 반환
+
+        // 인자로 받은 TodoList를 사용자가 달력에서 선택한 연 월 일이 같은 경우로 필터링하여 MutableList로 반환
         return todoList.filter {
             it.year_Todo == selectedDate.year &&
                     it.month_Todo == selectedDate.monthValue &&
