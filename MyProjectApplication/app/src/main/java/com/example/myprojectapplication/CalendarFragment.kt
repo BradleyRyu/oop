@@ -8,26 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myprojectapplication.databinding.FragmentCalendarBinding
 import com.example.myprojectapplication.viewmodel.TodoViewModel
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.Calendar
 
 class CalendarFragment : Fragment() {
 
     // 현재 프래그먼트에 대한 바인딩 설정
-    var binding: FragmentCalendarBinding? = null
+    private var binding: FragmentCalendarBinding? = null
 
     // TodoList를 불러올 TodoViewModel 초기화
-    val viewModel: TodoViewModel by activityViewModels()
+    private val viewModel: TodoViewModel by activityViewModels()
 
     // id같은 경우 LoginFragment에서 입력된 사용자의 ID를 viewModel에서 불러와야하고
     // 그 전에는 초기화하지 않기 때문에 by lazy로 선언
-    val id by lazy {
+    private val id by lazy {
         viewModel.currentUserId ?: "ID 입력 안 됨"
     }
 
@@ -87,8 +84,6 @@ class CalendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
     }
-
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     // 사용자에 ID에 따라 선택한 날짜에 해당하는 TodoList를 출력하는 함수. 앞서 만든 LocatDate 자료구조를 인자로 받음

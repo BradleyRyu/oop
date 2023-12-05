@@ -1,19 +1,22 @@
 package com.example.myprojectapplication
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myprojectapplication.databinding.FragmentTodoBinding
 import com.example.myprojectapplication.viewmodel.TodoViewModel
+import java.time.DateTimeException
+import java.time.LocalDate
 
 class TodoFragment : Fragment() {
 
@@ -24,11 +27,11 @@ class TodoFragment : Fragment() {
     private var todoList: MutableList<TodoList> = mutableListOf()
 
     // 사용자의 정보를 가져올 TodoViewModel 초기화
-    val viewModel: TodoViewModel by activityViewModels()
+    private val viewModel: TodoViewModel by activityViewModels()
 
     // id같은 경우 LoginFragment에서 입력된 사용자의 ID를 viewModel에서 불러와야하고
     // 그 전에는 초기화하지 않기 때문에 by lazy로 선언
-    val id by lazy {
+    private val id by lazy {
         viewModel.currentUserId ?: "ID 입력 안 됨"
     }
 
@@ -57,6 +60,7 @@ class TodoFragment : Fragment() {
                 // 만약 recTodo의 어댑터가 TodoAdapter의 인스턴스(메모리에 올라간 객체)라면, TodoAdapter의 removeList를 사용해 해당 위치의 아이템을 제거함.
                 (binding?.recTodo?.adapter as? TodoAdapter)?.removeList(position)
                 viewModel.removeTodoItem(id, position)
+                floatingToast("삭제되었습니다.")
             }
         })
     }
@@ -66,6 +70,7 @@ class TodoFragment : Fragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -80,10 +85,27 @@ class TodoFragment : Fragment() {
         // ItemTouchHelper를 RecyclerView에 연결 ( 스와이프를 통한 리스트 삭제를 위함 )
         itemTouchHelper.attachToRecyclerView(binding?.recTodo)
 
+        // id = arguments?.getString("id")? : "id 입력 안됨 " 아이디 번들이 아니라 뷰모델로 불러오기
+        // ViewModel에서 사용자의 투두리스트 데이터를 관찰
+        viewModel.observeUser(id).observe(viewLifecycleOwner) { userID ->
+            // userID가 null이 아니면 정렬된 리스트를 어댑터에 전달
+            userID?.let {
+                // 투두리스트를 UI에 띄우는 코드
+                todoList = it.todo.toMutableList()
+                binding?.recTodo?.adapter = TodoAdapter(sortTodoList(todoList))
+            }
+        }
+
         // 목표 사이클 수 설정을 위한 스피너( Dropdown Menu ) 설정부분
         val goalCycle = listOf("목표 사이클 수를 설정하세요.", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+
+        //context가 null이 될 수 있는 경우
+        // onCreate 이전에 context가 불리는 경우
+
         val spinnerAdapter =
-            context?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, goalCycle) }
+            binding?.root?.context?.let {
+                ArrayAdapter(it, android.R.layout.simple_list_item_1, goalCycle)
+            }
         binding?.spnCycle?.adapter = spinnerAdapter
 
         // 할 일을 추가하는 버튼을 클릭하면 생기는 이벤트.
@@ -127,16 +149,6 @@ class TodoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // id = arguments?.getString("id")? : "id 입력 안됨 " 아이디 번들이 아니라 뷰모델로 불러오기
-        // ViewModel에서 사용자의 투두리스트 데이터를 관찰
-        viewModel.observeUser(id).observe(viewLifecycleOwner) { userID ->
-            // userID가 null이 아니면 정렬된 리스트를 어댑터에 전달
-            userID?.let {
-                // 투두리스트를 UI에 띄우는 코드
-                todoList = it.todo.toMutableList()
-                binding?.recTodo?.adapter = TodoAdapter(sortTodoList(todoList))
-            }
-        }
     }
 
     // todolist array를 연 월 일 순으로 정렬하는 함수
@@ -151,6 +163,7 @@ class TodoFragment : Fragment() {
     }
 
     //addList로 넘어 온 값들의 유효성 검사 함수
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun addList(
         whattodo: String?,
         whentodo_year: Int?,
@@ -193,28 +206,59 @@ class TodoFragment : Fragment() {
     }
 
     // 입력한 날짜 값이 유효한 값인지 검사함. ( 각 월의 최대 일수 및 연도에 따른 윤달 체크 )
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun isValidDate(year: Int?, month: Int?, day: Int?): Boolean {
-        return when {
-            // 각 날짜의 입력값이 null이 본 어플의 제적 연도인 2023년보다 작지 않으면서 입력한 월이 1월에서 12월 범위 안에 들어있다면
-            (year != null) && (month != null) && (day != null) && (year >= 2023) && (month in 1..12) -> {
-                when(month) {
-                    1, 3, 5, 7, 8, 10, 12 -> day in 1..31
-                    4, 6, 9, 11 -> day in 1..30
-                    2 -> {
-                        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) day in 1..29
-                        else day in 1..28
-                    }
-                    else -> {
-                        // 월에 따른 최대 일수를 넘어가거나, 윤달 관련 잘못된 입력이 있을 경우 띄우는 토스트
-                        Toast.makeText(binding?.root?.context, "날짜가 잘못 입력되었으니 확인 바랍니다.", Toast.LENGTH_SHORT).show()
-                        false
+
+        // 오늘의 날짜를 저장하는 변수를 선언함 (이후 사용자가 오늘 이전의 날짜를 입력했을 경우, 비교를 위한 대비)
+        val currentDate: LocalDate = LocalDate.now()
+
+        // 사용자가 기입한 날짜를 LocalDate 객체의 변수로 생성하여 비교를 용이하게 함
+        // 또한 넘어오는 값이 nullable한 객체들이기 때문에, null로 넘어올 시 0으로 값을 저장하도록 세탕힘
+        val inputDate: LocalDate = try {
+            // 넘어온 year, month, day값이 null 이라면 오늘 날짜로 설정함.
+            LocalDate.of(year ?: currentDate.year, month ?: currentDate.monthValue, day ?: currentDate.dayOfMonth)
+        } catch (e: DateTimeException) {
+            // 사용자가 입력한 값이 날짜의 형식에 맞지 않을 경우 예외처리함.
+            floatingToast("유효한 날짜 값이 아닙니다.\n다시 확인해주세요.")
+
+            // 예외가 뜨지 않도록 오늘 날짜로 설정하고
+            LocalDate.now()
+
+            // false값을 반환해 TodoList에 추가하지 않음
+            return false
+        }
+
+        // 오늘 날짜 이전의 값이 입력되었다면 추가할 수 없도록 함
+        if( inputDate < currentDate ) {
+            floatingToast("오늘 이전의 날짜는 입력할 수 없습니다. \n다시 입력해주세요.")
+            return false
+
+            // 입력한 날짜가 오늘 날짜를 포함한 이후이면
+        } else {
+            return when {
+                // 각 날짜의 입력값이 null이 아니라면
+                (year != null) && (month != null) && (day != null)  -> {
+                    // 입력한 월에 대한 최대 일수 확인절차
+                    when(month) {
+                        1, 3, 5, 7, 8, 10, 12 -> day in 1..31
+                        4, 6, 9, 11 -> day in 1..30
+                        // 2월은 윤달 확인절차도 거침
+                        2 -> {
+                            if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) day in 1..29
+                            else day in 1..28
+                        }
+                        else -> {
+                            // 월에 따른 최대 일수를 넘어가거나, 윤달 관련 잘못된 입력이 있을 경우 띄우는 토스트
+                            floatingToast("날짜가 잘못 입력되었으니 다시 확인 해주세요.")
+                            false
+                        }
                     }
                 }
-            }
-            else -> {
-                // 각 날짜의 입력값이 null이거나 위 범위에 해당하지 않는다면 띄우는 토스트
-                Toast.makeText(binding?.root?.context, "날짜가 잘못 입력되었으니 확인 바랍니다.", Toast.LENGTH_SHORT).show()
-                false
+                else -> {
+                    // 각 날짜의 입력값이 null이거나 위 범위에 해당하지 않는다면 띄우는 토스트
+                    floatingToast("날짜가 잘못 입력되었으니 다시 확인 해주세요.")
+                    false
+                }
             }
         }
     }
@@ -222,11 +266,14 @@ class TodoFragment : Fragment() {
     // 무엇을 할지, 언제 할지에 대한 값이 빈 문자열이거나 null이라면 잘못된 입력에 대한 toast를 띄움
     private fun isValidString(whattodo: String?, whenYear: String?, whenMonth: String?, whenDay: String?, inputCycle: String?): Boolean {
         if ( whattodo.isNullOrBlank() || whenYear.isNullOrBlank() || whenMonth.isNullOrBlank() || whenDay.isNullOrBlank() || inputCycle == "목표 사이클 수를 설정하세요.") {
-            Toast.makeText(binding?.root?.context, "모든 칸에 입력 바랍니다.", Toast.LENGTH_SHORT).show()
+            floatingToast("모든 칸에 입력해주세요.")
             return false
         }
         return true
     }
+
+    // 토스트띄우기 함수
+    private fun floatingToast(message: String) = Toast.makeText(binding?.root?.context, message, Toast.LENGTH_SHORT).show()
 
     override fun onDestroyView() {
         super.onDestroyView()
