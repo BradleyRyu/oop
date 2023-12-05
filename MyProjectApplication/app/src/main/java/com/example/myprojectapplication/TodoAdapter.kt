@@ -30,12 +30,15 @@ class TodoAdapter(val todoList: MutableList<TodoList>): RecyclerView.Adapter<Tod
 
     class Holder(private val binding: ListTodoBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(todolist: TodoList) {
+
+            // todoList에 띄울 항목들
             binding.txtTodo.text = todolist.thing_Todo
             binding.txtDate.text = "${todolist.year_Todo.toString()}년 ${todolist.month_Todo.toString()}월 ${todolist.day_Todo.toString()}일"
             binding.txtGoalCycle.text = todolist.goalCycle.toString()
             binding.txtDoneCycle.text = todolist.achievedCycle.toString()
 
             // toString으로 적용 시 색깔이 제대로 반영되지 않는 오류 발견
+            // 목표 사이클에 달성되지 않은 경우 -> 빨간글씨 , 달성된 경우 -> 파란 글씨
             if( (binding.txtDoneCycle.text as String) < (binding.txtGoalCycle.text as String)) {
                 binding.txtDoneCycle.setTextColor(Color.parseColor("red"))
             } else {
@@ -44,6 +47,8 @@ class TodoAdapter(val todoList: MutableList<TodoList>): RecyclerView.Adapter<Tod
 
         }
     }
+
+    // 항목에서 제거
     fun removeList(position: Int) {
         todoList.removeAt(position)
         notifyItemRemoved(position)

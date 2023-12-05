@@ -99,13 +99,13 @@ class TodoFragment : Fragment() {
         // 목표 사이클 수 설정을 위한 스피너( Dropdown Menu ) 설정부분
         val goalCycle = listOf("목표 사이클 수를 설정하세요.", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
 
-        //context가 null이 될 수 있는 경우
-        // onCreate 이전에 context가 불리는 경우
-
+        // 스피너의 어댑터 설정
         val spinnerAdapter =
             binding?.root?.context?.let {
                 ArrayAdapter(it, android.R.layout.simple_list_item_1, goalCycle)
             }
+
+        // 스피너에 어댑터 연결
         binding?.spnCycle?.adapter = spinnerAdapter
 
         // 할 일을 추가하는 버튼을 클릭하면 생기는 이벤트.
@@ -208,7 +208,7 @@ class TodoFragment : Fragment() {
         binding?.spnCycle?.setSelection(0)
     }
 
-    // 입력한 날짜 값이 유효한 값인지 검사함. ( 각 월의 최대 일수 및 연도에 따른 윤달 체크 )
+    // 입력한 날짜 값이 유효한 값인지 검사함.
     @RequiresApi(Build.VERSION_CODES.O)
     private fun isValidDate(year: Int?, month: Int?, day: Int?): Boolean {
 
@@ -222,7 +222,7 @@ class TodoFragment : Fragment() {
             // 넘어온 year, month, day값이 null 이라면 오늘 날짜로 설정함.
             LocalDate.of(year ?: currentDate.year, month ?: currentDate.monthValue, day ?: currentDate.dayOfMonth)
 
-        } catch (e: DateTimeException) {
+        } catch ( e: DateTimeException ) {
 
             // DateTimeException -> 유효한 날짜 값이 아닐 경우의 에러
             // 사용자가 입력한 값이 날짜의 형식에 맞지 않을 경우 예외처리함.
@@ -232,18 +232,35 @@ class TodoFragment : Fragment() {
             return false
         }
 
-        // 오늘 날짜 이전의 값이 입력되었다면
-        if( inputDate < currentDate ) {
-            floatingToast("오늘 이전의 날짜는 입력할 수 없습니다. \n다시 입력해주세요.")
+        when {
+            // 오늘 날짜 이전의 값이 입력되었다면
+            inputDate < currentDate -> {
 
-            //false값을 반환하여 리스트에 추가할 수 없도록 함
-            return false
+                // 안내 토스트메세지를 띄우고
+                floatingToast("오늘 이전의 날짜는 입력할 수 없습니다. \n다시 입력해주세요.")
+
+                // false값을 반환하여 리스트에 추가할 수 없도록 함
+                return false
+            }
+
+            // 너무 먼 미래의 연도가 입력되었을 경우에
+            inputDate.year > currentDate.year + 3 -> {
+
+                // 입력할 수 있는 최대 연도를 알려주는 토스트메세지를 띄우고
+                floatingToast("최대 ${currentDate.year + 3}년까지 입력할 수 있습니다.")
+
+                // false값을 반환하여 리스트에 추가할 수 없도록 함
+                return false
+            }
         }
+
+        // 위 예외사항에 포함되지 않는다면 true값을 반환
         return true
 
+        /*
         // 입력한 날짜가 오늘 날짜를 포함한 이후이면
-        // else {
-            /*
+        else {
+
             return when {
                 // 각 날짜의 입력값이 null이 아니라면
                 (year != null) && (month != null) && (day != null)  -> {
@@ -269,9 +286,9 @@ class TodoFragment : Fragment() {
                     false
                 }
             }
-            */
-            //return true
-        //}
+            return true
+        }
+        */
     }
 
     // 무엇을 할지, 언제 할지에 대한 값이 빈 문자열이거나 null이라면 잘못된 입력에 대한 toast를 띄움
