@@ -28,7 +28,7 @@ _todo가 무조건 Null이 아니라는 조건
 아래 바인딩과 TimerEntryFragment의 바인딩도 마찬가지
 https://developer.android.com/topic/libraries/view-binding?hl=ko
 
-binding은 get()을 통해서 _binding이 널이 아닌 경우에만 접근할 수 있도록 : 델리게이트
+binding은 get()을 통해서 _binding이 널이 아닌 경우에만 접근할 수 있도록
  */
 
 class TimerFragment : Fragment() {

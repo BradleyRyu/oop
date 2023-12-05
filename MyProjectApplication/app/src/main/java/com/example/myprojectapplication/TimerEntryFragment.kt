@@ -29,9 +29,12 @@ class TimerEntryFragment : Fragment() {
     //바인딩, 뷰모델 등 변수 선언
     /*
     https://developer.android.com/topic/libraries/view-binding?hl=ko
-    binding은 get()을 통해서 _binding이 널이 아닌 경우에만 접근할 수 있도록 : 델리게이트
+    binding은 get()을 통해서 _binding이 널이 아닌 경우에만 접근할 수 있도록
         값을 가져오는 동작을 _binding에게 위임하는 형식
-        만약 _binding이 null일 경우, nullpointexception으로 뷰가 파괴된 상태에서 접근하는 것 방지
+        만약 _binding이 null일 경우, 파괴된 상태에서 접근하는 것 방지
+
+        즉, binding은 _binding null 여부 체크하고 non null 타입으로 반환
+        뷰의 생명주기와 관련된 작업에서는 이러한 패턴이 일반적으로 안전 : 메모리 누수 방지
      */
     private var _binding: FragmentTimerEntryBinding? = null
     private val binding get() = _binding!!
