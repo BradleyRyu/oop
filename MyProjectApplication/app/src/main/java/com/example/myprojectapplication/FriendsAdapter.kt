@@ -50,7 +50,7 @@ class FriendslistPopupFragment: DialogFragment() {
         friendId.let {
             binding?.popupTitle?.text = it // 팝업창의 타이틀을 friendId로 설정
             viewModel.currentUserId?.let {
-                val id = it
+                val id = it // 접속한 사용자의 id
                 binding?.btnDelete?.setOnClickListener {
                     Toast.makeText(binding?.root?.context, "${friendId}가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                     friendId?.let { viewModel.deleteFriend(id, it) } // 친구 삭제 함수
@@ -98,6 +98,11 @@ class FriendsAdapter(var friendsList: MutableList<FriendData>): RecyclerView.Ada
                 "ONLINE" -> R.drawable.online
                 "OFFLINE" -> R.drawable.offline
                 else -> R.drawable.user
+            })
+
+            binding.txtState.setTextColor( when( friendState ) {
+                "ONLINE" -> Color.BLUE
+                else -> Color.RED
             })
 
             // 이미지를 누를 경우 팝업창을 띄운다.

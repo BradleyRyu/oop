@@ -32,6 +32,7 @@ class FriendsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val friendsAdapter = FriendsAdapter(mutableListOf())
+
         viewModel.currentUserId?.let { // 사용자가 유효한 경우에만 실행
             viewModel.updateFriendsList(it) // 자신의 친구상태를 업데이트하는 메서드
             viewModel.observeFriendsList(it).observe(viewLifecycleOwner, Observer {friendsList ->

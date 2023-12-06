@@ -56,6 +56,7 @@ class UserRepository {
 
     fun addNewFriends(id: String, newFriendId: String) {
         userRef.child(newFriendId).child("state").addListenerForSingleValueEvent(object : ValueEventListener {
+            // 친구의 상태를 관찰하고 이를 바탕으로 친구 데이터를 생성한다.
             override fun onDataChange(snapshot: DataSnapshot) {
 //                val friendState = snapshot.getValue(Boolean::class.java) ?: false
                 val stateString = when( snapshot.getValue(Boolean::class.java) ?: false ) {
@@ -70,7 +71,8 @@ class UserRepository {
                         val friendsList = snapshot.children.mapNotNull {
                             it.getValue(FriendData::class.java)
                         }
-                        // 어떠한 친구와도 곂치지 않을 때 친구를 추가
+                        // 어떠한 친구와도 곂치지 않을 때 친구를 추가 .any는 중복되는 요소가 있을 경우 true를 반환한다. false의 경우
+                        // 중복되는 아이디가 없음을 의미한다.
                         if (!friendsList.any { it.id == newFriendId }) {
                             val newFriendsList = friendsList.toMutableList() + newFriend
                             userRef.child(id).child("friendsList").setValue(newFriendsList)
@@ -186,12 +188,13 @@ class UserRepository {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val friendsList = snapshot.children.mapNotNull {
                     it.getValue(FriendData::class.java)
-                }.toMutableList() // 친구의 리스트는 업데이트로 인하여 변경될 수 있다.
+                }.toMutableList() // 친구의 리스트는 업데이트로 인하여 변경될 수 있다. 현재 사용자의 친구리스트를 가져온다.
 
                 // 친구리스트의 각각에 대한 람다함수를 사용
                 friendsList.forEach { friend ->
                     userRef.child(friend.id).child("state").addValueEventListener( object: ValueEventListener {
                         // 루틴을 통해 친구의 상태에 따른 업데이트를 진행한다.
+                        // 친구목록에 있는 모든 친구들의 현재 상태를 확인하여 친구리스트의 상태를 업데이트한다.
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val friendState = snapshot.getValue(Boolean::class.java) ?: false
                             friend.state = if (friendState) "ONLINE" else "OFFLINE"
